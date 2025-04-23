@@ -11,7 +11,10 @@ app.UseSwaggerUI(options => {
     options.SwaggerEndpoint("/openapi/v1.json", "Coffee Shop");
 });
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors();
 

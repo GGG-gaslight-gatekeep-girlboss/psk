@@ -1,0 +1,11 @@
+services:
+  coffee-shop.server:
+    image: coffee-shop:latest
+    container_name: coffee-shop.server
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+    ports:
+      - "8080:8080"
