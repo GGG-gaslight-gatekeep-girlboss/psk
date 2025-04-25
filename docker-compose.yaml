@@ -1,4 +1,20 @@
 services:
+  coffee-shop.database:
+    image: postgres:latest
+    container_name: coffee-shop.database
+    environment:
+      - PGPORT=5433
+      - POSTGRES_DB=CoffeeShop
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - $APPDATA/coffee-shop-db:/var/lib/postgresql/data
+    ports:
+      - "5433:5433"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
   coffee-shop.server:
     image: coffee-shop:latest
     container_name: coffee-shop.server
