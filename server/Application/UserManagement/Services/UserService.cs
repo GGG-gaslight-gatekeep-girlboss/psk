@@ -4,7 +4,7 @@ using CoffeeShop.Application.UserManagement.Interfaces;
 using CoffeeShop.Domain.UserManagement.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace PointOfSale.BusinessLogic.ApplicationUserManagement.Services;
+namespace CoffeeShop.Application.UserManagement.Services;
 
 public class UserService : IUserService
 {

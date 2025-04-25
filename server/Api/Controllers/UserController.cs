@@ -10,14 +10,14 @@ public sealed class UserController : ControllerBase
 {
     private readonly IUserService _userService;
 
-    public UserController(IUserService applicationUserService)
+    public UserController(IUserService userService)
     {
-        _userService = applicationUserService;
+        _userService = userService;
     }
 
     [HttpPost]
     [Route("register")]
-    public async Task<IActionResult> RegisterApplicationUser([FromBody] RegisterUserDTO request)
+    public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDTO request)
     {
         var user = await _userService.CreateUser(request);
 

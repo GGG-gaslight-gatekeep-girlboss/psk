@@ -6,7 +6,6 @@ using CoffeeShop.DataAccess;
 using CoffeeShop.Domain.UserManagement.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PointOfSale.BusinessLogic.ApplicationUserManagement.Services;
 
 namespace CoffeeShop.Api.Extensions;
 
