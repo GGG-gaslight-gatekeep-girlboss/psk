@@ -1,19 +1,41 @@
 using CoffeeShop.Api.Extensions;
+using CoffeeShop.Domain.UserManagement.Enums;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSharedServices(builder.Environment);
+builder.Services.AddSharedServices(builder.Environment, builder.Configuration).AddUserManagement();
 
 var app = builder.Build();
 
 app.MapOpenApi();
 
-app.UseSwaggerUI(options => {
+app.UseSwaggerUI(options =>
+{
     options.SwaggerEndpoint("/openapi/v1.json", "Coffee Shop");
 });
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
+}
+else
+{
+    app.ApplyMigrations();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = Enum.GetNames(typeof(Roles));
+
+    foreach (var role in roles)
+    {
+        var roleExist = await roleManager.RoleExistsAsync(role);
+        if (!roleExist)
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
 }
 
 app.UseCors();
