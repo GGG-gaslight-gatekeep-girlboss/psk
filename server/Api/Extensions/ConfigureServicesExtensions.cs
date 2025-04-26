@@ -1,11 +1,16 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CoffeeShop.Api.UserManagement.Interfaces;
+using CoffeeShop.Api.BusinessManagement.Services;
 using CoffeeShop.Api.UserManagement.Services;
+using CoffeeShop.BusinessLogic.BusinessManagement.Interfaces;
+using CoffeeShop.BusinessLogic.BusinessManagement.Services;
+using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Services;
 using CoffeeShop.DataAccess;
+using CoffeeShop.DataAccess.BusinessManagement.Repositories;
+using CoffeeShop.DataAccess.Common.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +26,7 @@ public static class ConfigureServicesExtensions
     {
         var connectionString = configuration.GetConnectionString("Database");
         services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(connectionString));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services
             .AddControllers()
@@ -70,6 +76,15 @@ public static class ConfigureServicesExtensions
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddUserManager<UserManager<User>>()
             .AddRoleManager<RoleManager<IdentityRole>>();
+        return services;
+    }
+
+    public static IServiceCollection AddBusinessManagement(this IServiceCollection services)
+    {
+        services.AddScoped<IBusinessRepository, BusinessRepository>();
+        services.AddScoped<IBusinessMappingService, BusinessMappingService>();
+        services.AddScoped<IBusinessService, BusinessService>();
+
         return services;
     }
 }
