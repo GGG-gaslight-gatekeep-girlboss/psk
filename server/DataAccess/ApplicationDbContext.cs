@@ -1,6 +1,5 @@
 using System.Reflection;
-using CoffeeShop.Domain.UserManagement.Entities;
-using Microsoft.AspNetCore.Identity;
+using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
