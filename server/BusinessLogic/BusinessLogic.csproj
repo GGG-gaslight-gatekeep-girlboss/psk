@@ -3,12 +3,9 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>CoffeeShop.Application</RootNamespace>
-        <AssemblyName>CoffeeShop.Application</AssemblyName>
+        <RootNamespace>CoffeeShop.BusinessLogic</RootNamespace>
+        <AssemblyName>CoffeeShop.BusinessLogic</AssemblyName>
     </PropertyGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
-    </ItemGroup>
     <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
