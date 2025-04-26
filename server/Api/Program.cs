@@ -1,5 +1,5 @@
 using CoffeeShop.Api.Extensions;
-using CoffeeShop.Domain.UserManagement.Enums;
+using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,10 +18,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }
-else
-{
-    app.ApplyMigrations();
-}
+
+app.ApplyMigrations();
 
 using (var scope = app.Services.CreateScope())
 {

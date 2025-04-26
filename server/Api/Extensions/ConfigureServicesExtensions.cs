@@ -1,9 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CoffeeShop.Application.UserManagement.Interfaces;
-using CoffeeShop.Application.UserManagement.Services;
+using CoffeeShop.Api.UserManagement.Interfaces;
+using CoffeeShop.Api.UserManagement.Services;
+using CoffeeShop.BusinessLogic.UserManagement.Entities;
+using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
+using CoffeeShop.BusinessLogic.UserManagement.Services;
 using CoffeeShop.DataAccess;
-using CoffeeShop.Domain.UserManagement.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
