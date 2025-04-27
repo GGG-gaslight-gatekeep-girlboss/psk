@@ -3,10 +3,7 @@ using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
-builder
-    .Services.AddSharedServices(builder.Environment, builder.Configuration)
-    .AddUserManagement()
-    .AddBusinessManagement();
+builder.Services.AddSharedServices(builder.Environment, builder.Configuration).AddUserManagement();
 
 var app = builder.Build();
 

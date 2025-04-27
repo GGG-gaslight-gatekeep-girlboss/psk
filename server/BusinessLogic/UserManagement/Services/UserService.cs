@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
@@ -20,20 +21,6 @@ public class UserService : IUserService
 
     public async Task<UserDTO> CreateUser(RegisterUserDTO dto, string role)
     {
-        //TODO move validation to separate service
-        if (role == Roles.Employee.ToString() && dto.BusinessId is null)
-        {
-            throw new ValidationException(
-                "Employee must be associated with business. Provide employee business ID."
-            );
-        }
-        else if (role != Roles.Employee.ToString() && dto.BusinessId is not null)
-        {
-            throw new ValidationException(
-                "Only employees can be associated with business upon registration."
-            );
-        }
-
         var user = _userMappingService.MapRegisterUserDTOToUser(dto);
         var result = await _userManager.CreateAsync(user, dto.Password);
 
@@ -54,9 +41,9 @@ public class UserService : IUserService
     {
         var user = await _userManager.FindByIdAsync(id);
 
-        if (user is null)
+        if (user is null || !user.IsActive)
         {
-            throw new KeyNotFoundException($"User with id {id} is not found");
+            throw new EntityNotFoundException(typeof(User), id);
         }
 
         if (dto.FirstName is not null)
@@ -104,11 +91,18 @@ public class UserService : IUserService
 
         if (user is null)
         {
-            throw new KeyNotFoundException($"User with id {id} is not found");
+            throw new EntityNotFoundException(typeof(User), id);
         }
         else
         {
-            var result = await _userManager.DeleteAsync(user);
+            user.Email = $"ANONYMIZED{user.Id}@ANONYMIZED.COM";
+            user.PhoneNumber = "ANONYMIZED";
+            user.FirstName = "ANONYMIZED";
+            user.LastName = "ANONYMIZED";
+            user.UserName = "ANONYMIZED";
+            user.IsActive = false;
+
+            var result = await _userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
             {

@@ -5,6 +5,5 @@ public sealed record RegisterUserDTO(
     string LastName,
     string Email,
     string PhoneNumber,
-    string Password,
-    Guid? BusinessId
+    string Password
 );

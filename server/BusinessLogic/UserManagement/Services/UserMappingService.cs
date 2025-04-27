@@ -27,7 +27,6 @@ public class UserMappingService : IUserMappingService
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             PhoneNumber = dto.PhoneNumber,
-            EmployerBusinessId = dto.BusinessId ?? null,
         };
     }
 }

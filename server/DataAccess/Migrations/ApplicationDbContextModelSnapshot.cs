@@ -22,56 +22,6 @@ namespace CoffeeShop.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CoffeeShop.BusinessLogic.BusinessManagement.Entities.Business", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BusinessOwnerId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("ModifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ModifiedById")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BusinessOwnerId")
-                        .IsUnique();
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("ModifiedById");
-
-                    b.ToTable("Business", (string)null);
-                });
-
             modelBuilder.Entity("CoffeeShop.BusinessLogic.UserManagement.Entities.User", b =>
                 {
                     b.Property<string>("Id")
@@ -90,9 +40,6 @@ namespace CoffeeShop.DataAccess.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
-
-                    b.Property<Guid?>("EmployerBusinessId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -136,8 +83,6 @@ namespace CoffeeShop.DataAccess.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployerBusinessId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -281,41 +226,6 @@ namespace CoffeeShop.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CoffeeShop.BusinessLogic.BusinessManagement.Entities.Business", b =>
-                {
-                    b.HasOne("CoffeeShop.BusinessLogic.UserManagement.Entities.User", "BusinessOwner")
-                        .WithOne("OwnedBusiness")
-                        .HasForeignKey("CoffeeShop.BusinessLogic.BusinessManagement.Entities.Business", "BusinessOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CoffeeShop.BusinessLogic.UserManagement.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("CoffeeShop.BusinessLogic.UserManagement.Entities.User", "ModifiedBy")
-                        .WithMany()
-                        .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("BusinessOwner");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("ModifiedBy");
-                });
-
-            modelBuilder.Entity("CoffeeShop.BusinessLogic.UserManagement.Entities.User", b =>
-                {
-                    b.HasOne("CoffeeShop.BusinessLogic.BusinessManagement.Entities.Business", "EmployerBusiness")
-                        .WithMany("Employees")
-                        .HasForeignKey("EmployerBusinessId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("EmployerBusiness");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -365,16 +275,6 @@ namespace CoffeeShop.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("CoffeeShop.BusinessLogic.BusinessManagement.Entities.Business", b =>
-                {
-                    b.Navigation("Employees");
-                });
-
-            modelBuilder.Entity("CoffeeShop.BusinessLogic.UserManagement.Entities.User", b =>
-                {
-                    b.Navigation("OwnedBusiness");
                 });
 #pragma warning restore 612, 618
         }
