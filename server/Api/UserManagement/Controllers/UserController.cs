@@ -1,3 +1,4 @@
+using CoffeeShop.Api.UserManagement;
 using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
@@ -10,10 +11,18 @@ namespace CoffeeShop.Api.Controllers;
 public sealed class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly CookieOptions _cookieOptions;
 
     public UserController(IUserService userService)
     {
         _userService = userService;
+        _cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = DateTime.UtcNow.AddMinutes(Constants.TokenExpiryTime),
+        };
     }
 
     [HttpPost]
@@ -57,5 +66,11 @@ public sealed class UserController : ControllerBase
     {
         await _userService.DeleteUser(id);
         return NoContent();
+    }
+
+    [HttpPost]
+    [Route("login")]
+    public async Task<IActionResult> LoginUser([FromBody] LoginUserDTO request) {
+        throw new NotImplementedException();
     }
 }

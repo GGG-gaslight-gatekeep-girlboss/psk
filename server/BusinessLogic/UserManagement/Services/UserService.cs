@@ -108,4 +108,8 @@ public class UserService : IUserService
             throw new InvalidOperationException(errors);
         }
     }
+
+    public async Task<string> AuthenticateUser(LoginUserDTO dto){
+        throw new NotImplementedException();
+    }
 }
