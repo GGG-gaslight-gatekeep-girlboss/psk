@@ -10,7 +10,7 @@ services:
     volumes:
       - $APPDATA/coffee-shop-db:/var/lib/postgresql/data
     ports:
-      - "8081:5433"
+      - "5433:5433"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
