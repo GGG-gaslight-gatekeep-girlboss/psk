@@ -1,8 +1,7 @@
-using System.ComponentModel.DataAnnotations;
 using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
-using CoffeeShop.BusinessLogic.UserManagement.Enums;
+using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
@@ -31,7 +30,7 @@ public class UserService : IUserService
         else
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new ValidationException(errors);
+            throw new InvalidDomainValueException(errors);
         }
 
         return _userMappingService.MapUserToDTO(user, role);
@@ -43,7 +42,7 @@ public class UserService : IUserService
 
         if (user is null || !user.IsActive)
         {
-            throw new EntityNotFoundException(typeof(User), id);
+            throw new UserNotFoundException(id);
         }
 
         if (dto.FirstName is not null)
@@ -77,7 +76,7 @@ public class UserService : IUserService
         if (!result.Succeeded)
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            throw new ValidationException(errors);
+            throw new InvalidDomainValueException(errors);
         }
 
         var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
@@ -91,24 +90,22 @@ public class UserService : IUserService
 
         if (user is null || !user.IsActive)
         {
-            throw new EntityNotFoundException(typeof(User), id);
+            throw new UserNotFoundException(id);
         }
-        else
+
+        user.Email = $"ANONYMIZED{user.Id}@ANONYMIZED.COM";
+        user.PhoneNumber = "ANONYMIZED";
+        user.FirstName = "ANONYMIZED";
+        user.LastName = "ANONYMIZED";
+        user.UserName = "ANONYMIZED";
+        user.IsActive = false;
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
         {
-            user.Email = $"ANONYMIZED{user.Id}@ANONYMIZED.COM";
-            user.PhoneNumber = "ANONYMIZED";
-            user.FirstName = "ANONYMIZED";
-            user.LastName = "ANONYMIZED";
-            user.UserName = "ANONYMIZED";
-            user.IsActive = false;
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-            {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                throw new InvalidOperationException(errors);
-            }
+            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException(errors);
         }
     }
 }

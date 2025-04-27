@@ -11,4 +11,5 @@ public interface IBaseRepository<TEntity>
     Task Delete(Guid id);
     void DeleteMany(IEnumerable<TEntity> entities);
     void Update(TEntity entity);
+    string GetEntityNotFoundErrorMessage(Guid id);
 }

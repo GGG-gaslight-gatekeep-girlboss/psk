@@ -28,7 +28,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             return entity;
         }
 
-        throw new EntityNotFoundException(typeof(TEntity), id);
+        throw new EntityNotFoundException(GetEntityNotFoundErrorMessage(id));
     }
 
     public async Task<List<TEntity>> GetMany(IEnumerable<Guid> ids)
@@ -56,4 +56,6 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     {
         DbSet.Update(entity);
     }
+
+    public abstract string GetEntityNotFoundErrorMessage(Guid id);
 }

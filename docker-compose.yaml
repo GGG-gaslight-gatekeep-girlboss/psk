@@ -10,7 +10,7 @@ services:
     volumes:
       - $APPDATA/coffee-shop-db:/var/lib/postgresql/data
     ports:
-      - "5433:5433"
+      - "8081:5433"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
@@ -22,6 +22,6 @@ services:
       ASPNETCORE_ENVIRONMENT: "Development"
     build:
       context: .
-      dockerfile: Server/Dockerfile
+      dockerfile: server/Dockerfile
     ports:
       - "8080:8080"
