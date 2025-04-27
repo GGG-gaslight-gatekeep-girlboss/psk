@@ -1,4 +1,5 @@
 using CoffeeShop.Api.Extensions;
+using CoffeeShop.Api.Middlewares;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using Microsoft.AspNetCore.Identity;
 
@@ -37,6 +38,15 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseCors();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseMiddleware<DevelopmentExceptionHandlingMiddleware>();
+}
+else
+{
+    app.UseMiddleware<ProductionExceptionHandlingMiddleware>();
+}
 
 app.MapControllers();
 

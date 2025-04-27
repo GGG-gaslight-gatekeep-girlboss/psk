@@ -22,6 +22,6 @@ services:
       ASPNETCORE_ENVIRONMENT: "Development"
     build:
       context: .
-      dockerfile: Server/Dockerfile
+      dockerfile: server/Dockerfile
     ports:
       - "8080:8080"
