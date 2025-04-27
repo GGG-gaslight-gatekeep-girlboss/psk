@@ -89,7 +89,7 @@ public class UserService : IUserService
     {
         var user = await _userManager.FindByIdAsync(id);
 
-        if (user is null)
+        if (user is null || !user.IsActive)
         {
             throw new EntityNotFoundException(typeof(User), id);
         }
