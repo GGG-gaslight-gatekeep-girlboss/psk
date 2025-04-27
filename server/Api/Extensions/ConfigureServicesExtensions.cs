@@ -63,6 +63,8 @@ public static class ConfigureServicesExtensions
         IConfiguration configuration
     )
     {
+        services.AddHttpContextAccessor();
+
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserMappingService, UserMappingService>();
         services.AddScoped<ITokenService, TokenService>();
