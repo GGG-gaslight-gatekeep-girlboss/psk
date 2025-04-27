@@ -2,5 +2,5 @@ namespace CoffeeShop.Api.UserManagement;
 
 public class Constants
 {
-    public const int TokenExpiryTime = 60;
+    public const string AccessTokenName = "CoffeeShopAccessToken";
 }

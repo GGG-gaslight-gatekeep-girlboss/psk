@@ -1,7 +1,7 @@
-using CoffeeShop.Api.UserManagement;
 using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeShop.Api.Controllers;
@@ -21,7 +21,9 @@ public sealed class UserController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Lax,
-            Expires = DateTime.UtcNow.AddMinutes(Constants.TokenExpiryTime),
+            Expires = DateTime.UtcNow.AddMinutes(
+                BusinessLogic.UserManagement.Constants.JWTExpiryTime
+            ),
         };
     }
 
@@ -44,6 +46,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "BusinessOwner")]
     [Route("employees")]
     public async Task<IActionResult> RegisterEmployee([FromBody] RegisterUserDTO request)
     {
@@ -53,6 +56,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPatch]
+    [Authorize(Roles = "BusinessOwner,Employee,Client")]
     [Route("employees/{id:Guid}")]
     public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UpdateUserDTO request)
     {
@@ -61,6 +65,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = "BusinessOwner,Employee,Client")]
     [Route("employees/{id:Guid}")]
     public async Task<IActionResult> DeleteEmployee(string id)
     {
@@ -70,7 +75,23 @@ public sealed class UserController : ControllerBase
 
     [HttpPost]
     [Route("login")]
-    public async Task<IActionResult> LoginUser([FromBody] LoginUserDTO request) {
-        throw new NotImplementedException();
+    public async Task<IActionResult> LoginUser([FromBody] LoginUserDTO request)
+    {
+        var (user, token) = await _userService.AuthenticateUser(request);
+        Response.Cookies.Append(
+            UserManagement.Constants.AccessTokenName,
+            token.AccessToken,
+            _cookieOptions
+        );
+        return Ok(user);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "BusinessOwner,Employee,Client")]
+    [Route("logout")]
+    public IActionResult LogoutUser()
+    {
+        Response.Cookies.Delete(UserManagement.Constants.AccessTokenName, _cookieOptions);
+        return Ok();
     }
 }

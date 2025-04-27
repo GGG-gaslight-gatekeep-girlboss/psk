@@ -9,13 +9,20 @@ namespace CoffeeShop.BusinessLogic.UserManagement.Services;
 
 public class UserService : IUserService
 {
+    // TODO add user authorization service to validate actions based on user id and role
     private readonly UserManager<User> _userManager;
     private readonly IUserMappingService _userMappingService;
+    private readonly ITokenService _tokenService;
 
-    public UserService(UserManager<User> userManager, IUserMappingService userMappingService)
+    public UserService(
+        UserManager<User> userManager,
+        IUserMappingService userMappingService,
+        ITokenService tokenService
+    )
     {
         _userManager = userManager;
         _userMappingService = userMappingService;
+        _tokenService = tokenService;
     }
 
     public async Task<UserDTO> CreateUser(RegisterUserDTO dto, string role)
@@ -109,7 +116,25 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<string> AuthenticateUser(LoginUserDTO dto){
-        throw new NotImplementedException();
+    public async Task<(UserDTO, TokenDTO)> AuthenticateUser(LoginUserDTO dto)
+    {
+        if (
+            await _userManager.FindByEmailAsync(dto.Email) is { } user
+            && await _userManager.CheckPasswordAsync(user, dto.Password)
+            && user.IsActive
+        )
+        {
+            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            var accessToken = _tokenService.GenerateAccessToken(user, role!);
+
+            return (
+                _userMappingService.MapUserToDTO(user, role!),
+                _userMappingService.MapTokenDTO(accessToken)
+            );
+        }
+        else
+        {
+            throw new UserNotAuthenticatedException("Invalid user credentials.");
+        }
     }
 }
