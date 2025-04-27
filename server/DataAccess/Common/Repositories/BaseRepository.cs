@@ -1,4 +1,5 @@
 using CoffeeShop.BusinessLogic.Common.Entities;
+using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,7 +28,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             return entity;
         }
 
-        throw new KeyNotFoundException($"Entity with ID {id} was not found.");
+        throw new EntityNotFoundException(typeof(TEntity), id);
     }
 
     public async Task<List<TEntity>> GetMany(IEnumerable<Guid> ids)
