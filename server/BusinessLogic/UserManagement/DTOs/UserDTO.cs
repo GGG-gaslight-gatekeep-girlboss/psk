@@ -1,4 +1,4 @@
-namespace CoffeeShop.Api.UserManagement.DTOs;
+namespace CoffeeShop.BusinessLogic.UserManagement.DTOs;
 
 public sealed record UserDTO(
     string Id,

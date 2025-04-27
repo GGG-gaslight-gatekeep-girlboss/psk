@@ -1,11 +1,12 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CoffeeShop.Api.UserManagement.Interfaces;
 using CoffeeShop.Api.UserManagement.Services;
+using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Services;
 using CoffeeShop.DataAccess;
+using CoffeeShop.DataAccess.Common.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public static class ConfigureServicesExtensions
     {
         var connectionString = configuration.GetConnectionString("Database");
         services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(connectionString));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services
             .AddControllers()

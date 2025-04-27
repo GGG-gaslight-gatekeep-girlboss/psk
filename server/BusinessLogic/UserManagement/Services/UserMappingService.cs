@@ -1,6 +1,6 @@
-using CoffeeShop.Api.UserManagement.DTOs;
-using CoffeeShop.Api.UserManagement.Interfaces;
+using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
+using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 
 namespace CoffeeShop.Api.UserManagement.Services;
 

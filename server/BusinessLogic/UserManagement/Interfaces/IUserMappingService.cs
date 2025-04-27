@@ -1,7 +1,7 @@
-using CoffeeShop.Api.UserManagement.DTOs;
+using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 
-namespace CoffeeShop.Api.UserManagement.Interfaces;
+namespace CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 
 public interface IUserMappingService
 {

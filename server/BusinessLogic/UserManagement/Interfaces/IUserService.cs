@@ -1,8 +1,10 @@
-using CoffeeShop.BusinessLogic.UserManagement.Entities;
+using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 
 namespace CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 
 public interface IUserService
 {
-    Task<User> AddUser(User user, string password, string role);
+    Task<UserDTO> CreateUser(RegisterUserDTO dto, string role);
+    Task<UserDTO> UpdateUser(string id, UpdateUserDTO user);
+    Task DeleteUser(string id);
 }

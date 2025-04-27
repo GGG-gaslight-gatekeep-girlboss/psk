@@ -1,5 +1,6 @@
 using System.Reflection;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
+using CoffeeShop.DataAccess.Common.Interceptors;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,5 +16,10 @@ public class ApplicationDbContext : IdentityDbContext<User>
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         base.OnModelCreating(modelBuilder);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.AddInterceptors(new AuditingInterceptor());
     }
 }

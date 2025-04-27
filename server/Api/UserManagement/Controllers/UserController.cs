@@ -1,5 +1,4 @@
-using CoffeeShop.Api.UserManagement.DTOs;
-using CoffeeShop.Api.UserManagement.Interfaces;
+using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -11,31 +10,52 @@ namespace CoffeeShop.Api.Controllers;
 public sealed class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly IUserMappingService _userMappingService;
 
-    public UserController(IUserService userService, IUserMappingService userMappingService)
+    public UserController(IUserService userService)
     {
         _userService = userService;
-        _userMappingService = userMappingService;
     }
 
     [HttpPost]
-    [Route("register/client")]
+    [Route("business-owners")]
+    public async Task<IActionResult> RegisterBusinessOwner([FromBody] RegisterUserDTO request)
+    {
+        var employee = await _userService.CreateUser(request, Roles.BusinessOwner.ToString());
+
+        return Ok(employee);
+    }
+
+    [HttpPost]
+    [Route("clients")]
     public async Task<IActionResult> RegisterClient([FromBody] RegisterUserDTO request)
     {
-        var user = _userMappingService.MapRegisterUserDTOToUser(request);
-        await _userService.AddUser(user, request.Password, Roles.Client.ToString());
+        var client = await _userService.CreateUser(request, Roles.Client.ToString());
 
-        return Ok(_userMappingService.MapUserToDTO(user, Roles.Client.ToString()));
+        return Ok(client);
     }
 
     [HttpPost]
-    [Route("register/employee")]
+    [Route("employees")]
     public async Task<IActionResult> RegisterEmployee([FromBody] RegisterUserDTO request)
     {
-        var user = _userMappingService.MapRegisterUserDTOToUser(request);
-        await _userService.AddUser(user, request.Password, Roles.Employee.ToString());
+        var employee = await _userService.CreateUser(request, Roles.Employee.ToString());
 
-        return Ok(_userMappingService.MapUserToDTO(user, Roles.Employee.ToString()));
+        return Ok(employee);
+    }
+
+    [HttpPatch]
+    [Route("employees/{id:Guid}")]
+    public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UpdateUserDTO request)
+    {
+        var employee = await _userService.UpdateUser(id, request);
+        return Ok(employee);
+    }
+
+    [HttpDelete]
+    [Route("employees/{id:Guid}")]
+    public async Task<IActionResult> DeleteEmployee(string id)
+    {
+        await _userService.DeleteUser(id);
+        return NoContent();
     }
 }
