@@ -22,7 +22,7 @@ public sealed class UserController : ControllerBase
             Secure = true,
             SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddMinutes(
-                BusinessLogic.UserManagement.Constants.JWTExpiryTime
+                BusinessLogic.UserManagement.Constants.JWTExpiryTime.Minutes
             ),
         };
     }
@@ -46,7 +46,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "BusinessOwner")]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)}")]
     [Route("employees")]
     public async Task<IActionResult> RegisterEmployee([FromBody] RegisterUserDTO request)
     {
@@ -56,7 +56,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPatch]
-    [Authorize(Roles = "BusinessOwner,Employee,Client")]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
     [Route("employees/{id:Guid}")]
     public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UpdateUserDTO request)
     {
@@ -65,7 +65,7 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize(Roles = "BusinessOwner,Employee,Client")]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)}")]
     [Route("employees/{id:Guid}")]
     public async Task<IActionResult> DeleteEmployee(string id)
     {
@@ -87,7 +87,9 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "BusinessOwner,Employee,Client")]
+    [Authorize(
+        Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)},{nameof(Roles.Client)}"
+    )]
     [Route("logout")]
     public IActionResult LogoutUser()
     {
