@@ -2,5 +2,5 @@ namespace CoffeeShop.BusinessLogic.UserManagement;
 
 public class Constants
 {
-    public const int JWTExpiryTime = 60;
+    public static readonly TimeSpan JWTExpiryTime = TimeSpan.FromMinutes(60);
 }
