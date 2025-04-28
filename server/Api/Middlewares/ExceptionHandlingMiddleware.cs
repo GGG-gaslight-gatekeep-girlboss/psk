@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using CoffeeShop.BusinessLogic.Common.Exceptions;
+using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
 
 namespace CoffeeShop.Api.Middlewares;
 
@@ -49,6 +50,8 @@ public abstract class ExceptionHandlingMiddleware
     {
         EntityNotFoundException => HttpStatusCode.NotFound,
         InvalidDomainValueException => HttpStatusCode.BadRequest,
+        UserNotAuthenticatedException => HttpStatusCode.Unauthorized,
+        UserNotAuthorizedException => HttpStatusCode.Forbidden,
         _ => HttpStatusCode.InternalServerError
     };
 }

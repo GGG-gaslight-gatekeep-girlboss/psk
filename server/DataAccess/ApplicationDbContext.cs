@@ -1,5 +1,6 @@
 using System.Reflection;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
+using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.DataAccess.Common.Interceptors;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +9,16 @@ namespace CoffeeShop.DataAccess;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) { }
+    private readonly ICurrentUserAccessor _currentUserAccessor;
+
+    public ApplicationDbContext(
+        DbContextOptions<ApplicationDbContext> options,
+        ICurrentUserAccessor currentUserAccessor
+    )
+        : base(options)
+    {
+        _currentUserAccessor = currentUserAccessor;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,6 +29,6 @@ public class ApplicationDbContext : IdentityDbContext<User>
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.AddInterceptors(new AuditingInterceptor());
+        optionsBuilder.AddInterceptors(new AuditingInterceptor(_currentUserAccessor));
     }
 }

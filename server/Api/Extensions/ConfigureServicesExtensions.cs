@@ -1,5 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CoffeeShop.Api.UserManagement;
 using CoffeeShop.Api.UserManagement.Services;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
@@ -7,8 +9,10 @@ using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Services;
 using CoffeeShop.DataAccess;
 using CoffeeShop.DataAccess.Common.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CoffeeShop.Api.Extensions;
 
@@ -54,10 +58,18 @@ public static class ConfigureServicesExtensions
         return services;
     }
 
-    public static IServiceCollection AddUserManagement(this IServiceCollection services)
+    public static IServiceCollection AddUserManagement(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
+        services.AddHttpContextAccessor();
+
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserMappingService, UserMappingService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
+
         services
             .AddIdentityCore<User>(options =>
             {
@@ -72,6 +84,39 @@ public static class ConfigureServicesExtensions
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddUserManager<UserManager<User>>()
             .AddRoleManager<RoleManager<IdentityRole>>();
+
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(configuration["Jwt:SigningKey"]!)
+                    ),
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = configuration["Jwt:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Cookies[Constants.AccessTokenName];
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    },
+                };
+            });
+
         return services;
     }
 }

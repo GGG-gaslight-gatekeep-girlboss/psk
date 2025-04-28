@@ -7,4 +7,5 @@ public interface IUserMappingService
 {
     public UserDTO MapUserToDTO(User user, string role);
     public User MapRegisterUserDTOToUser(RegisterUserDTO dto);
+    public TokenDTO MapTokenDTO(string accessToken);
 }

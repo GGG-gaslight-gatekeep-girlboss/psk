@@ -29,4 +29,9 @@ public class UserMappingService : IUserMappingService
             PhoneNumber = dto.PhoneNumber,
         };
     }
+
+    public TokenDTO MapTokenDTO(string accessToken)
+    {
+        return new TokenDTO(accessToken);
+    }
 }
