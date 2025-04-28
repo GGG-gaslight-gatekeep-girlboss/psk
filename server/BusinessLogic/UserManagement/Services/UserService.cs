@@ -86,7 +86,7 @@ public class UserService : IUserService
             throw new InvalidDomainValueException(errors);
         }
 
-        var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+        var role = (await _userManager.GetRolesAsync(user)).First();
 
         return _userMappingService.MapUserToDTO(user, role!);
     }
@@ -124,7 +124,7 @@ public class UserService : IUserService
             && user.IsActive
         )
         {
-            var role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            var role = (await _userManager.GetRolesAsync(user)).First();
             var accessToken = _tokenService.GenerateAccessToken(user, role!);
 
             return (
