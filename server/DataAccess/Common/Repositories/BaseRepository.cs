@@ -57,5 +57,11 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         DbSet.Update(entity);
     }
 
+    public async Task<List<TEntity>> GetAll()
+    {
+        return await DbSet.ToListAsync();
+    }
+
     public abstract string GetEntityNotFoundErrorMessage(Guid id);
+
 }
