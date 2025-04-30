@@ -4,9 +4,9 @@ namespace CoffeeShop.BusinessLogic.ProductManagement.Entities;
 
 public class ProductImage : BaseEntity
 {
-    public Product Product { get; set; }
-    public Guid ProductId { get; set; }
-    public required string BlobKey { get; set; }
+    public Product Product { get; private set; }
+    public Guid ProductId { get; private set; }
+    public string BlobKey { get; private set; }
 
     private ProductImage()
     {
