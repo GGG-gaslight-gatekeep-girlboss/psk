@@ -38,7 +38,7 @@ public class TokenService : ITokenService
             Subject = new ClaimsIdentity(claims),
             Issuer = _jwtIssuer,
             Audience = _jwtAudience,
-            Expires = DateTime.UtcNow.AddMinutes(Constants.JWTExpiryTime),
+            Expires = DateTime.UtcNow.AddMinutes(Constants.JWTExpiryTime.Minutes),
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha512Signature

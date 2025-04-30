@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 builder
     .Services.AddSharedServices(builder.Environment, builder.Configuration)
+    .AddProductManagement()
     .AddUserManagement(builder.Configuration);
 
 var app = builder.Build();

@@ -3,6 +3,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using CoffeeShop.Api.UserManagement;
 using CoffeeShop.Api.UserManagement.Services;
+using CoffeeShop.Api.UserManagement;
+using CoffeeShop.Api.UserManagement.Services;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
@@ -13,6 +15,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
+using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
+using CoffeeShop.BusinessLogic.ProductManagement.Services;
+using CoffeeShop.DataAccess.ProductManagement.Repositories;
+
 
 namespace CoffeeShop.Api.Extensions;
 
@@ -116,6 +123,16 @@ public static class ConfigureServicesExtensions
                     },
                 };
             });
+
+        return services;
+    }
+
+
+    public static IServiceCollection AddProductManagement(this IServiceCollection services)
+    {
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductMappingService, ProductMappingService>();
+        services.AddScoped<IProductService, ProductService>();
 
         return services;
     }
