@@ -1,9 +1,15 @@
 using CoffeeShop.Api.Extensions;
 using CoffeeShop.Api.Middlewares;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
+using DotNetEnv.Configuration;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .AddEnvironmentVariables()
+    .AddDotNetEnv(".env");
+
 builder
     .Services.AddSharedServices(builder.Environment, builder.Configuration)
     .AddProductManagement()

@@ -3,6 +3,7 @@ using System;
 using CoffeeShop.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoffeeShop.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250430165315_AddProductImage")]
+    partial class AddProductImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,7 +342,7 @@ namespace CoffeeShop.DataAccess.Migrations
                         .HasForeignKey("ModifiedById")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("CoffeeShop.BusinessLogic.ProductManagement.Entities.Product", "Product")
+                    b.HasOne("CoffeeShop.BusinessLogic.ProductManagement.Entities.Product", null)
                         .WithOne("Image")
                         .HasForeignKey("CoffeeShop.BusinessLogic.ProductManagement.Entities.ProductImage", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -348,8 +351,6 @@ namespace CoffeeShop.DataAccess.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ModifiedBy");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

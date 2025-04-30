@@ -10,9 +10,8 @@ namespace CoffeeShop.DataAccess;
 
 public class ApplicationDbContext : IdentityDbContext<User>
 {
-
     public DbSet<Product> Products { get; set; }
-
+    public DbSet<ProductImage> ProductImages { get; set; }
 
     private readonly ICurrentUserAccessor _currentUserAccessor;
 

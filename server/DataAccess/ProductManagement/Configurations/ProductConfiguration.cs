@@ -3,8 +3,8 @@ using CoffeeShop.DataAccess.Common.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+namespace CoffeeShop.DataAccess.ProductManagement.Configurations;
 
-namespace PointOfSale.DataAccess.ProductManagement.Configurations;
 public class ProductConfiguration : BaseEntityConfiguration<Product>
 {
     private const string TableName = "Product";
@@ -24,10 +24,12 @@ public class ProductConfiguration : BaseEntityConfiguration<Product>
             .IsRequired()
             .HasColumnType("decimal(18,2)");
 
-        builder.Property(p => p.ImageUrl)
-            .HasMaxLength(2048);
+        builder.HasOne(p => p.Image)
+            .WithOne(i => i.Product)
+            .HasForeignKey<ProductImage>(p => p.ProductId)
+            .IsRequired();
         
-        builder.Property(p => p.Stock) 
+        builder.Property(p => p.Stock)
             .IsRequired();
 
         builder.ToTable(TableName);

@@ -13,15 +13,20 @@ services:
       - "5433:5433"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
+      interval: 5s
+      timeout: 5s
       retries: 5
   coffee-shop.server:
     image: coffee-shop:latest
     container_name: coffee-shop.server
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
+    env_file: server/.env
     build:
       context: .
       dockerfile: server/Dockerfile
     ports:
       - "8080:8080"
+    depends_on:
+      coffee-shop.database:
+        condition: service_healthy
