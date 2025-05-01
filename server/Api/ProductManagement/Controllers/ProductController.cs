@@ -50,6 +50,4 @@ public class ProductController : ControllerBase
         var products = await _productService.GetAllProducts();
         return Ok(products);  
     }
-
-
 }

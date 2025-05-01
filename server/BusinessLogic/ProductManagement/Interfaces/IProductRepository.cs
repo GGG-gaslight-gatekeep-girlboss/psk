@@ -3,4 +3,8 @@ using CoffeeShop.BusinessLogic.ProductManagement.Entities;
 
 namespace CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
 
-public interface IProductRepository : IBaseRepository<Product> { }
+public interface IProductRepository : IBaseRepository<Product>
+{
+    Task<Product> GetWithImage(Guid productId);
+    Task<List<Product>> GetAllWithImages();
+}

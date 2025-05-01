@@ -3,7 +3,6 @@ using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.Common.Exceptions;
 
-
 namespace CoffeeShop.BusinessLogic.ProductManagement.Services;
 
 public class ProductService : IProductService
@@ -15,8 +14,7 @@ public class ProductService : IProductService
     public ProductService(
         IProductRepository productRepository,
         IProductMappingService productMappingService,
-        IUnitOfWork unitOfWork
-    )
+        IUnitOfWork unitOfWork)
     {
         _productRepository = productRepository;
         _productMappingService = productMappingService;
@@ -45,21 +43,13 @@ public class ProductService : IProductService
 
     public async Task<ProductDTO> GetProduct(Guid id)
     {
-        return _productMappingService.MapProductToProductDTO(await _productRepository.Get(id));
+        var product = await _productRepository.GetWithImage(id);
+        return _productMappingService.MapProductToProductDTO(product);
     }
 
      public async Task DeleteProduct(Guid id)
     {
-        var product = await _productRepository.Get(id);
-
-        if (product is null)
-        {
-            throw new KeyNotFoundException($"Product with id {id} is not found");
-        }
-        else
-        {
-            await _productRepository.Delete(id);
-        }
+        await _productRepository.Delete(id);
     }
 
     public async Task<ProductDTO> UpdateProduct(Guid id, UpdateProductDTO dto)
@@ -86,11 +76,6 @@ public class ProductService : IProductService
             product.Price = dto.Price.Value;
         }
 
-        if (dto.ImageUrl is not null)
-        {
-            product.ImageUrl = dto.ImageUrl;
-        }
-
         if (dto.Stock.HasValue)
         {
             product.Stock = dto.Stock.Value;
@@ -105,9 +90,7 @@ public class ProductService : IProductService
 
     public async Task<List<ProductDTO>> GetAllProducts()
     {
-        var products = await _productRepository.GetAll();  
+        var products = await _productRepository.GetAllWithImages();  
         return products.Select(_productMappingService.MapProductToProductDTO).ToList();
     }
-
-    
 }

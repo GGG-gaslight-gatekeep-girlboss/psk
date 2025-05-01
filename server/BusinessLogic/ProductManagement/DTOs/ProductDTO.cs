@@ -5,6 +5,6 @@ public sealed record ProductDTO(
     string Name,
     string Description,
     decimal Price,
-    string ImageUrl,
-    int Stock
+    int Stock,
+    string? ImageUrl
 );

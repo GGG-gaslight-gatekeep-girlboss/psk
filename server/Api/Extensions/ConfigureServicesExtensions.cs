@@ -1,11 +1,14 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Amazon.Runtime;
+using Amazon.S3;
 using CoffeeShop.Api.UserManagement;
 using CoffeeShop.Api.UserManagement.Services;
 using CoffeeShop.Api.UserManagement;
 using CoffeeShop.Api.UserManagement.Services;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
+using CoffeeShop.BusinessLogic.Common.Services;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Services;
@@ -34,6 +37,8 @@ public static class ConfigureServicesExtensions
         var connectionString = configuration.GetConnectionString("Database");
         services.AddDbContext<ApplicationDbContext>(o => o.UseNpgsql(connectionString));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddCloudflareBlobStorage(configuration);
 
         services
             .AddControllers()
@@ -127,13 +132,35 @@ public static class ConfigureServicesExtensions
         return services;
     }
 
-
     public static IServiceCollection AddProductManagement(this IServiceCollection services)
     {
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductMappingService, ProductMappingService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IProductImageService, ProductImageService>();
 
         return services;
+    }
+
+    private static void AddCloudflareBlobStorage(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IBlobStorage, CloudflareBlobStorage>(_ =>
+        {
+            var accessKey = configuration["BlobStorage:AccessKey"]!;
+            var secretKey = configuration["BlobStorage:SecretKey"]!;
+            var accountId = configuration["BlobStorage:AccountId"]!;
+            
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            var config = new AmazonS3Config
+            {
+                ServiceURL = $"https://{accountId}.r2.cloudflarestorage.com",
+                RequestChecksumCalculation = RequestChecksumCalculation.WHEN_REQUIRED,
+                ResponseChecksumValidation = ResponseChecksumValidation.WHEN_REQUIRED
+            };
+            
+            var s3Client = new AmazonS3Client(credentials, config);
+
+            return new CloudflareBlobStorage(s3Client, configuration);
+        });
     }
 }

@@ -4,7 +4,7 @@ namespace CoffeeShop.BusinessLogic.Common.Entities;
 
 public abstract class BaseEntity
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.CreateVersion7();
     public DateTimeOffset CreatedAt { get; set; }
     public User CreatedBy { get; set; } = null!;
     public string? CreatedById { get; set; }

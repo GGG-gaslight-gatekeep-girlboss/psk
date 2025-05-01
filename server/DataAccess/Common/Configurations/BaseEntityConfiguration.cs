@@ -9,7 +9,10 @@ public class BaseEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity
 {
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
     {
-        builder.HasKey(d => d.Id);
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Id)
+            .ValueGeneratedNever();
 
         builder
             .HasOne(e => e.CreatedBy)
