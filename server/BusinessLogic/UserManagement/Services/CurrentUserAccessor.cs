@@ -14,10 +14,15 @@ public class CurrentUserAccessor : ICurrentUserAccessor
         _httpContextAccessor = httpContextAccessor;
     }
 
+    public bool IsAuthenticated()
+    {
+        return _httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated ?? false;
+    }
+
     public string GetCurrentUserId()
     {
         var userIdClaim = _httpContextAccessor
-            .HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)
+            .HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)
             ?.Value;
 
         if (string.IsNullOrEmpty(userIdClaim))

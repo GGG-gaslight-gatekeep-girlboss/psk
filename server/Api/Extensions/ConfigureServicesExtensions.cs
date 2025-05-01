@@ -5,8 +5,6 @@ using Amazon.Runtime;
 using Amazon.S3;
 using CoffeeShop.Api.UserManagement;
 using CoffeeShop.Api.UserManagement.Services;
-using CoffeeShop.Api.UserManagement;
-using CoffeeShop.Api.UserManagement.Services;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.Common.Services;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
