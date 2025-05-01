@@ -2,8 +2,7 @@
 
 ## Building
 
-To run the project, go to repository root and run `docker compose 
-up --build`
+To run the project, go to repository root and run `docker compose up --build`
 
 ## Logs
 
