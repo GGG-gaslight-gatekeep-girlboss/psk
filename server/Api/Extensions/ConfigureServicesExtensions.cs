@@ -137,6 +137,7 @@ public static class ConfigureServicesExtensions
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductMappingService, ProductMappingService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IProductImageService, ProductImageService>();
 
         return services;
     }

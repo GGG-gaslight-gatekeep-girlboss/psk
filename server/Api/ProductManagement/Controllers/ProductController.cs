@@ -50,21 +50,4 @@ public class ProductController : ControllerBase
         var products = await _productService.GetAllProducts();
         return Ok(products);  
     }
-
-    [HttpPut]
-    [Route("{id:Guid}/image")]
-    public async Task<IActionResult> SetProductImage([FromRoute] Guid id, IFormFile image)
-    {
-        var setProductImageDTO = new SetProductImageDTO
-        {
-            ProductId = id,
-            FileName = image.FileName,
-            ContentType = image.ContentType,
-            Image = image.OpenReadStream()
-        };
-
-        await _productService.SetProductImage(setProductImageDTO);
-        
-        return NoContent();
-    }
 }

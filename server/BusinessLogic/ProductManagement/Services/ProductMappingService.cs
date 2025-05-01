@@ -1,6 +1,7 @@
 using CoffeeShop.BusinessLogic.ProductManagement.DTOs;
 using CoffeeShop.BusinessLogic.ProductManagement.Entities;
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace CoffeeShop.BusinessLogic.ProductManagement.Services;
@@ -34,6 +35,18 @@ public class ProductMappingService : IProductMappingService
             Description = dto.Description,
             Price = Math.Round(dto.Price, 2),
             Stock = dto.Stock
+        };
+    }
+
+    public SetProductImageDTO MapSetProductImageDTO(Guid productId, IFormFile file)
+    {
+        return new SetProductImageDTO
+        {
+            ProductId = productId,
+            FileName = file.FileName,
+            ImageSize = file.Length,
+            ContentType = file.ContentType,
+            ImageStream = file.OpenReadStream()
         };
     }
 

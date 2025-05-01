@@ -9,5 +9,4 @@ public interface IProductService
     Task DeleteProduct(Guid id);
     Task<ProductDTO> UpdateProduct(Guid id, UpdateProductDTO dto);
     Task<List<ProductDTO>> GetAllProducts();
-    Task SetProductImage(SetProductImageDTO setProductImageDTO);
 }
