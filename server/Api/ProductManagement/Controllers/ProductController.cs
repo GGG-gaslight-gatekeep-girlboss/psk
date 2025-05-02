@@ -1,5 +1,7 @@
 using CoffeeShop.BusinessLogic.ProductManagement.DTOs;
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
+using CoffeeShop.BusinessLogic.UserManagement.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeShop.Api.ProductManagement.Controllers;
@@ -29,6 +31,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
     [Route("{id:Guid}")]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {
@@ -37,6 +40,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPatch]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
     [Route("{id:Guid}")]
     public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductDTO request)
     {
@@ -48,6 +52,6 @@ public class ProductController : ControllerBase
     public async Task<ActionResult<List<ProductDTO>>> GetAllProducts()
     {
         var products = await _productService.GetAllProducts();
-        return Ok(products);  
+        return Ok(products);
     }
 }
