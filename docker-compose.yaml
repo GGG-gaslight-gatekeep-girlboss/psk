@@ -37,8 +37,8 @@ services:
     volumes:
       - server_logs:/logs
     build:
-      context: .
-      dockerfile: server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
