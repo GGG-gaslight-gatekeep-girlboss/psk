@@ -137,4 +137,10 @@ public class UserService : IUserService
             throw new UserNotAuthenticatedException("Invalid user credentials.");
         }
     }
+
+    public async Task<List<UserDTO>> GetAllUsersByRole(string role)
+    {
+        var usersInRole = await _userManager.GetUsersInRoleAsync(role);
+        return usersInRole.Select(user => _userMappingService.MapUserToDTO(user, role)).ToList();
+    }
 }

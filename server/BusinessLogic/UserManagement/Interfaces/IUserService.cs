@@ -8,4 +8,5 @@ public interface IUserService
     Task<UserDTO> UpdateUser(string id, UpdateUserDTO user);
     Task DeleteUser(string id);
     Task<(UserDTO, TokenDTO)> AuthenticateUser(LoginUserDTO dto);
+    Task<List<UserDTO>> GetAllUsersByRole(string role);
 }
