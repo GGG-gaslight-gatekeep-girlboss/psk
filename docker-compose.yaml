@@ -26,10 +26,10 @@ services:
       - SEQ_FIRSTRUN_ADMINPASSWORD=admin
     ports:
       - "5431:5341"
-      - "8081:80"
+      - "5340:80"
 
   coffee-shop.server:
-    image: coffee-shop:latest
+    image: coffee-shop-server:latest
     container_name: coffee-shop.server
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
@@ -40,12 +40,30 @@ services:
       context: ./server
       dockerfile: Dockerfile
     ports:
-      - "8082:8080"
+      - "5000:8080"
     depends_on:
       coffee-shop.database:
         condition: service_healthy
       coffee-shop.seq:
         condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+  
+  coffee-shop.client:
+    image: coffee-shop-client:latest
+    container_name: coffee-shop.client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+    - "3000:80" 
+    depends_on:
+      coffee-shop.server:
+        condition: service_healthy
 
 volumes:
   postgres_data:

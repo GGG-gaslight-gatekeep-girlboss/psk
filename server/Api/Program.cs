@@ -17,7 +17,14 @@ builder
     .AddUserManagement(builder.Configuration);
 
 builder.Host.UseSerilog(
-    (context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration)
+    (context, loggerConfig) =>
+        loggerConfig
+            .ReadFrom.Configuration(context.Configuration)
+            .Filter.ByExcluding(
+                (e) =>
+                    e.Properties.ContainsKey("RequestPath")
+                    && e.Properties["RequestPath"].ToString() == "\"/health\""
+            )
 );
 
 var app = builder.Build();
@@ -79,5 +86,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
 
 app.Run();

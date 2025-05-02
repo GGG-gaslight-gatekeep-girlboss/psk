@@ -36,6 +36,8 @@ public static class ConfigureServicesExtensions
 
         services.AddCloudflareBlobStorage(configuration);
 
+        services.AddHealthChecks();
+
         services
             .AddControllers()
             .AddJsonOptions(options =>
