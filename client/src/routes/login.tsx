@@ -1,22 +1,16 @@
-import {
-  Container,
-  Title,
-  Text,
-  Anchor,
-  Paper,
-  TextInput,
-  PasswordInput,
-  Button,
-  Stack,
-} from "@mantine/core";
-import { Link } from "react-router-dom";
-import { paths } from "../config/paths";
-import { usePageTitle } from "../hooks/use-page-title";
+import { Anchor, Button, Container, Paper, PasswordInput, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginInput, useLogin } from "../features/users/api/login";
+import { useUserStore } from "../features/users/user-store";
+import { paths } from "../shared/config/paths";
+import { usePageTitle } from "../shared/hooks/use-page-title";
+import { showSuccessNotification } from "../shared/utils/notifications";
 
 export const LoginRoute = () => {
   usePageTitle({ title: "Log in" });
+  const setUser = useUserStore((state) => state.setUser);
+  const navigate = useNavigate();
 
   const loginForm = useForm<LoginInput>({
     mode: "uncontrolled",
@@ -26,7 +20,15 @@ export const LoginRoute = () => {
     },
   });
 
-  const loginMutation = useLogin({});
+  const loginMutation = useLogin({
+    mutationConfig: {
+      onSuccess: (user) => {
+        showSuccessNotification({ message: "Welcome back mate!" });
+        setUser(user);
+        navigate(paths.home.getHref());
+      },
+    },
+  });
 
   const handleLogin = (data: LoginInput) => {
     loginMutation.mutate({ data });
@@ -62,12 +64,7 @@ export const LoginRoute = () => {
             />
           </Stack>
 
-          <Button
-            fullWidth
-            mt="xl"
-            type="submit"
-            loading={loginMutation.isPending}
-          >
+          <Button fullWidth mt="xl" type="submit" loading={loginMutation.isPending}>
             Log in
           </Button>
         </form>

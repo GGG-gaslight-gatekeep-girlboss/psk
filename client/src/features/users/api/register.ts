@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { api } from "../../../config/api-client";
-import { User } from "../types";
-import { MutationConfig } from "../../../config/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+import { api } from "../../../shared/config/api-client";
+import { MutationConfig } from "../../../shared/config/react-query";
+import { User } from "../types";
 
 export const registerInputSchema = z.object({
   firstName: z.string().min(1, "First name is required."),

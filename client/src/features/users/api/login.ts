@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { User } from "../types";
-import { api } from "../../../config/api-client";
-import { MutationConfig } from "../../../config/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+import { api } from "../../../shared/config/api-client";
+import { MutationConfig } from "../../../shared/config/react-query";
+import { User } from "../types";
 
 export const loginInputSchema = z.object({
   email: z.string().min(1, "Email is required."),

@@ -5,5 +5,5 @@ export const usePageTitle = ({ title }: { title: string | null }) => {
 
   useEffect(() => {
     document.title = title ? `${title} | ${suffix}` : suffix;
-  }, []);
+  }, [title]);
 };

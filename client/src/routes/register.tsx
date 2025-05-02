@@ -1,23 +1,14 @@
-import {
-  Container,
-  Title,
-  Text,
-  Anchor,
-  Paper,
-  TextInput,
-  PasswordInput,
-  Button,
-  Stack,
-} from "@mantine/core";
-import { Link } from "react-router-dom";
-import { paths } from "../config/paths";
-import { usePageTitle } from "../hooks/use-page-title";
+import { Anchor, Button, Container, Paper, PasswordInput, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { Link, useNavigate } from "react-router-dom";
 import { RegisterInput, useRegister } from "../features/users/api/register";
-import { showSuccessNotification } from "../utils/notifications";
+import { paths } from "../shared/config/paths";
+import { usePageTitle } from "../shared/hooks/use-page-title";
+import { showSuccessNotification } from "../shared/utils/notifications";
 
 export const RegisterRoute = () => {
   usePageTitle({ title: "Register" });
+  const navigate = useNavigate();
 
   const registerForm = useForm<RegisterInput>({
     mode: "uncontrolled",
@@ -33,7 +24,8 @@ export const RegisterRoute = () => {
   const registerMutation = useRegister({
     mutationConfig: {
       onSuccess: () => {
-        showSuccessNotification({ message: "Registration successful." });
+        showSuccessNotification({ message: "Hello mate!" });
+        navigate(paths.login.getHref());
       },
     },
   });
@@ -92,12 +84,7 @@ export const RegisterRoute = () => {
             />
           </Stack>
 
-          <Button
-            fullWidth
-            mt="xl"
-            type="submit"
-            loading={registerMutation.isPending}
-          >
+          <Button fullWidth mt="xl" type="submit" loading={registerMutation.isPending}>
             Register
           </Button>
         </form>

@@ -8,3 +8,13 @@ export type User = {
   phoneNumber: string;
   role: Role;
 };
+
+export type Token = {
+  value: string;
+  expiresAt: string;
+};
+
+export type LoginResponse = {
+  user: User;
+  accessToken: Token;
+};

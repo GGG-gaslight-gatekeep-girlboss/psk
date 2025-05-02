@@ -11,7 +11,6 @@ export const showErrorNotification = ({ message }: { message: string }) => {
 
 export const showSuccessNotification = ({ message }: { message: string }) => {
   notifications.show({
-    title: "Success",
     message,
     color: "green",
     withBorder: true,
