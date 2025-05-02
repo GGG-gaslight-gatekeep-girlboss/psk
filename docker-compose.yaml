@@ -8,11 +8,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./docker-data/db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5433:5433"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -35,12 +35,18 @@ services:
       ASPNETCORE_ENVIRONMENT: "Development"
     env_file: server/.env
     volumes:
-      - ./docker-data/logs:/logs
+      - server_logs:/logs
     build:
       context: .
       dockerfile: server/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
-      - coffee-shop.database
-      - coffee-shop.seq
+      coffee-shop.database:
+        condition: service_healthy
+      coffee-shop.seq:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  server_logs:
