@@ -8,7 +8,7 @@ export const registerInputSchema = z.object({
   firstName: z.string().min(1, "First name is required."),
   lastName: z.string().min(1, "Last name is required."),
   phoneNumber: z.string().min(1, "Phone number is required."),
-  email: z.string().min(1, "Email is required."),
+  email: z.string().min(1, "Email is required.").email("Email is invalid."),
   password: z.string().min(1, "Password is required."),
 });
 
