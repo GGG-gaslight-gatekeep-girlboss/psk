@@ -2,14 +2,16 @@ import { createTheme, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import AddEmployee from "./pages/AddEmployee";
 import AddProduct from "./pages/AddProduct";
 import EditEmployee from "./pages/EditEmployee";
 import EditProduct from "./pages/EditProduct";
-import Employees from "./pages/Employees";
 import ProductManagement from "./pages/ProductManagement";
+import { AddEmployeeRoute } from "./routes/add-employee";
+import { EmployeeDetailsRoute } from "./routes/employee-details";
+import { EmployeesRoute } from "./routes/employees";
 import { HomeRoute } from "./routes/home";
 import LoginRoute from "./routes/login";
+import { ProtectedRoute } from "./routes/protected-route";
 import RegisterRoute from "./routes/register";
 import { CoreLayout } from "./shared/components/core-layout";
 import { paths } from "./shared/config/paths";
@@ -32,10 +34,14 @@ function App() {
 
             <Route element={<CoreLayout />}>
               <Route path={paths.home.path} element={<HomeRoute />} />
+
+              <Route element={<ProtectedRoute allowedRoles={["BusinessOwner"]} />}>
+                <Route path={paths.employees.path} element={<EmployeesRoute />} />
+                <Route path={paths.addEmployee.path} element={<AddEmployeeRoute />} />
+                <Route path={paths.employeeDetails.path} element={<EmployeeDetailsRoute />} />
+              </Route>
             </Route>
 
-            <Route path="/employees" element={<Employees />} />
-            <Route path="/add-employee" element={<AddEmployee />} />
             <Route path="/edit-employee/:id" element={<EditEmployee />} />
             <Route path="/product-management" element={<ProductManagement />} />
             <Route path="/add-product" element={<AddProduct />} />

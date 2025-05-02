@@ -1,4 +1,4 @@
-import { AppShell, Avatar, Button, Group, Menu, Title } from "@mantine/core";
+import { Anchor, AppShell, Avatar, Button, Group, Menu, NavLink } from "@mantine/core";
 import { Link, Outlet } from "react-router-dom";
 import { useLogout } from "../../features/users/api/logout";
 import { useUserStore } from "../../features/users/user-store";
@@ -8,6 +8,7 @@ import { showSuccessNotification } from "../utils/notifications";
 export function CoreLayout() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+  const showNavbar = user?.role === "Employee" || user?.role === "BusinessOwner";
 
   const logoutMutation = useLogout({
     mutationConfig: {
@@ -23,10 +24,19 @@ export function CoreLayout() {
   };
 
   return (
-    <AppShell header={{ height: 60 }} padding="md">
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: showNavbar ? 300 : 0,
+        breakpoint: "sm",
+      }}
+      padding="md"
+    >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Title order={5}>Coffee Shop</Title>
+          <Anchor component={Link} to={paths.home.getHref()} fw={600}>
+            Coffee Shop
+          </Anchor>
 
           {user ? (
             <Menu withArrow width={200} shadow="md">
@@ -48,6 +58,15 @@ export function CoreLayout() {
           )}
         </Group>
       </AppShell.Header>
+
+      {user && showNavbar && (
+        <AppShell.Navbar>
+          {user.role === "BusinessOwner" && (
+            <NavLink label="Employee management" component={Link} to={paths.employees.getHref()} />
+          )}
+        </AppShell.Navbar>
+      )}
+
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
