@@ -1,6 +1,7 @@
 using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
+using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -156,5 +157,17 @@ public class UserService : IUserService
             throw new UserNotFoundException(id);
 
         return _userMappingService.MapUserToDTO(user, role);
+    }
+
+    public async Task CreateBusinessOwner(RegisterUserDTO dto)
+    {
+        var businessOwner = (
+            await _userManager.GetUsersInRoleAsync(nameof(Roles.BusinessOwner))
+        ).FirstOrDefault();
+
+        if (businessOwner is null)
+        {
+            await CreateUser(dto, nameof(Roles.BusinessOwner));
+        }
     }
 }

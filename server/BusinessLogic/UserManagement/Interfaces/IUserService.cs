@@ -10,4 +10,5 @@ public interface IUserService
     Task<(UserDTO, TokenDTO)> AuthenticateUser(LoginUserDTO dto);
     Task<List<UserDTO>> GetAllUsersByRole(string role);
     Task<UserDTO> GetUserByIdAndRole(string id, string role);
+    Task CreateBusinessOwner(RegisterUserDTO dto);
 }
