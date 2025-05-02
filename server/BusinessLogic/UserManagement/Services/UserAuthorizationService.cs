@@ -1,4 +1,3 @@
-using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
