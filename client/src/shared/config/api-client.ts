@@ -2,7 +2,7 @@ import Axios, { InternalAxiosRequestConfig } from "axios";
 import { showErrorNotification } from "../utils/notifications";
 
 export const api = Axios.create({
-  baseURL: "http://localhost:8082",
+  baseURL: "http://localhost:5000",
 });
 
 function authRequestInterceptor(config: InternalAxiosRequestConfig) {
