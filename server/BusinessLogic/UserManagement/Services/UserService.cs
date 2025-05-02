@@ -143,4 +143,19 @@ public class UserService : IUserService
         var usersInRole = await _userManager.GetUsersInRoleAsync(role);
         return usersInRole.Select(user => _userMappingService.MapUserToDTO(user, role)).ToList();
     }
+
+    public async Task<UserDTO> GetUserByIdAndRole(string id, string role)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+
+        if (user == null)
+            throw new UserNotFoundException(id);
+
+        var isEmployee = await _userManager.IsInRoleAsync(user, role);
+
+        if (!isEmployee)
+            throw new UserNotFoundException(id);
+
+        return _userMappingService.MapUserToDTO(user, role);
+    }
 }
