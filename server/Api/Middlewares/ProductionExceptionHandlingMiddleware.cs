@@ -4,7 +4,10 @@ namespace CoffeeShop.Api.Middlewares;
 
 public class ProductionExceptionHandlingMiddleware : ExceptionHandlingMiddleware
 {
-    public ProductionExceptionHandlingMiddleware(RequestDelegate next) : base(next)
+    public ProductionExceptionHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<ProductionExceptionHandlingMiddleware> logger)
+        : base(next, logger)
     {
     }
     

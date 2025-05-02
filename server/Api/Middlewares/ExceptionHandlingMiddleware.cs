@@ -13,10 +13,14 @@ public abstract class ExceptionHandlingMiddleware
     };
     
     private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
-    protected ExceptionHandlingMiddleware(RequestDelegate next)
+    protected ExceptionHandlingMiddleware(
+        RequestDelegate next,
+        ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -27,6 +31,8 @@ public abstract class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Exception occurred: {Message}", ex.Message);
+            
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = (int)GetHttpStatusCodeForException(ex);
 

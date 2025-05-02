@@ -3,6 +3,7 @@ using CoffeeShop.Api.Middlewares;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using DotNetEnv.Configuration;
 using Microsoft.AspNetCore.Identity;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ builder
     .Services.AddSharedServices(builder.Environment, builder.Configuration)
     .AddProductManagement()
     .AddUserManagement(builder.Configuration);
+
+builder.Host.UseSerilog((context, loggerConfig) =>
+    loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 var app = builder.Build();
 
@@ -56,6 +60,8 @@ else
 {
     app.UseMiddleware<ProductionExceptionHandlingMiddleware>();
 }
+
+app.UseMiddleware<UserContextLoggingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

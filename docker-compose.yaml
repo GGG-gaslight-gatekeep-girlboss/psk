@@ -8,20 +8,34 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - $APPDATA/coffee-shop-db:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5433:5433"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+
+  coffee-shop.seq:
+    image: datalust/seq:latest
+    container_name: coffee-shop.seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINUSERNAME=admin
+      - SEQ_FIRSTRUN_ADMINPASSWORD=admin
+    ports:
+      - "5431:5341"
+      - "8081:80"
+
   coffee-shop.server:
     image: coffee-shop:latest
     container_name: coffee-shop.server
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
     env_file: server/.env
+    volumes:
+      - server_logs:/logs
     build:
       context: .
       dockerfile: server/Dockerfile
@@ -30,3 +44,9 @@ services:
     depends_on:
       coffee-shop.database:
         condition: service_healthy
+      coffee-shop.seq:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  server_logs:
