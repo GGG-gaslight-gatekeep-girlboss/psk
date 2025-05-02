@@ -58,7 +58,7 @@ public sealed class UserController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
-    [Route("employees/{id:string}")]
+    [Route("employees/{id}")]
     public async Task<IActionResult> GetEmployee(string id)
     {
         _userAuthorizationService.AuthorizeUserActionOnEmployee(id);
@@ -79,7 +79,7 @@ public sealed class UserController : ControllerBase
 
     [HttpPatch]
     [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
-    [Route("employees/{id:string}")]
+    [Route("employees/{id}")]
     public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UpdateUserDTO request)
     {
         _userAuthorizationService.AuthorizeUserActionOnEmployee(id);
@@ -90,7 +90,7 @@ public sealed class UserController : ControllerBase
 
     [HttpDelete]
     [Authorize(Roles = $"{nameof(Roles.BusinessOwner)}")]
-    [Route("employees/{id:string}")]
+    [Route("employees/{id}")]
     public async Task<IActionResult> DeleteEmployee(string id)
     {
         await _userService.DeleteUser(id);
