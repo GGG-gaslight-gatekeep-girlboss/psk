@@ -31,15 +31,6 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("business-owners")]
-    public async Task<IActionResult> RegisterBusinessOwner([FromBody] RegisterUserDTO request)
-    {
-        var employee = await _userService.CreateUser(request, Roles.BusinessOwner.ToString());
-
-        return Ok(employee);
-    }
-
-    [HttpPost]
     [Route("clients")]
     public async Task<IActionResult> RegisterClient([FromBody] RegisterUserDTO request)
     {
