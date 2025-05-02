@@ -11,11 +11,16 @@ namespace CoffeeShop.Api.Controllers;
 public sealed class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IUserAuthorizationService _userAuthorizationService;
     private readonly CookieOptions _cookieOptions;
 
-    public UserController(IUserService userService)
+    public UserController(
+        IUserService userService,
+        IUserAuthorizationService userAuthorizationService
+    )
     {
         _userService = userService;
+        _userAuthorizationService = userAuthorizationService;
         _cookieOptions = new CookieOptions
         {
             HttpOnly = true,
@@ -56,6 +61,8 @@ public sealed class UserController : ControllerBase
     [Route("employees/{id:string}")]
     public async Task<IActionResult> GetEmployee(string id)
     {
+        _userAuthorizationService.AuthorizeUserActionOnEmployee(id);
+
         var employee = await _userService.GetUserByIdAndRole(id, nameof(Roles.Employee));
         return Ok(employee);
     }
@@ -75,6 +82,8 @@ public sealed class UserController : ControllerBase
     [Route("employees/{id:string}")]
     public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UpdateUserDTO request)
     {
+        _userAuthorizationService.AuthorizeUserActionOnEmployee(id);
+
         var employee = await _userService.UpdateUser(id, request);
         return Ok(employee);
     }

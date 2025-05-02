@@ -9,7 +9,6 @@ namespace CoffeeShop.BusinessLogic.UserManagement.Services;
 
 public class UserService : IUserService
 {
-    // TODO add user authorization service to validate actions based on user id and role
     private readonly UserManager<User> _userManager;
     private readonly IUserMappingService _userMappingService;
     private readonly ITokenService _tokenService;
