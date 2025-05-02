@@ -21,9 +21,7 @@ public sealed class UserController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Lax,
-            Expires = DateTime.UtcNow.AddMinutes(
-                BusinessLogic.UserManagement.Constants.JWTExpiryTime.Minutes
-            ),
+            Expires = DateTime.UtcNow.Add(BusinessLogic.UserManagement.Constants.JWTExpiryTime),
         };
     }
 
