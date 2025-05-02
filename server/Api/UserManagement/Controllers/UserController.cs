@@ -43,6 +43,14 @@ public sealed class UserController : ControllerBase
         return Ok(client);
     }
 
+    [HttpGet]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)}")]
+    [Route("employees")]
+    public async Task<ActionResult<List<UserDTO>>> GetAllEmployees()
+    {
+        return Ok(await _userService.GetAllUsersByRole(nameof(Roles.Client)));
+    }
+
     [HttpPost]
     [Authorize(Roles = $"{nameof(Roles.BusinessOwner)}")]
     [Route("employees")]
