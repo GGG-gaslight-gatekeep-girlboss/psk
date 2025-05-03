@@ -1,6 +1,6 @@
 services:
   coffee-shop.database:
-    image: postgres:latest
+    image: postgres:16.8
     container_name: coffee-shop.database
     environment:
       - PGPORT=5433

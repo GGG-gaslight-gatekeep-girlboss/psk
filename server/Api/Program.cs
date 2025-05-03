@@ -6,6 +6,7 @@ using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using DotNetEnv.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,8 @@ builder.Host.UseSerilog(
             .Filter.ByExcluding(
                 (e) =>
                     e.Properties.ContainsKey("RequestPath")
-                    && e.Properties["RequestPath"].ToString() == "\"/health\""
+                    && e.Properties["RequestPath"] is ScalarValue sv
+                    && sv.Value?.ToString() == "/health"
             )
 );
 
