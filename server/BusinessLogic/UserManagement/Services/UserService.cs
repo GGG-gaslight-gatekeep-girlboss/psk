@@ -151,9 +151,9 @@ public class UserService : IUserService
         if (user == null)
             throw new UserNotFoundException(id);
 
-        var isEmployee = await _userManager.IsInRoleAsync(user, role);
+        var hasRole = await _userManager.IsInRoleAsync(user, role);
 
-        if (!isEmployee)
+        if (!hasRole)
             throw new UserNotFoundException(id);
 
         return _userMappingService.MapUserToDTO(user, role);
