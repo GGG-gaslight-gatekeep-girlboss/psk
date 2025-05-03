@@ -1,7 +1,7 @@
 import { Button, Container, Paper, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { useForm, zodResolver } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
-import { AddEmployeeInput, useAddEmployee } from "../features/users/api/add-employee";
+import { AddEmployeeInput, addEmployeeInputSchema, useAddEmployee } from "../features/users/api/add-employee";
 import { paths } from "../shared/config/paths";
 import { usePageTitle } from "../shared/hooks/use-page-title";
 import { showSuccessNotification } from "../shared/utils/notifications";
@@ -19,6 +19,7 @@ export const AddEmployeeRoute = () => {
       email: "",
       password: "",
     },
+    validate: zodResolver(addEmployeeInputSchema),
   });
 
   const addEmployeeMutation = useAddEmployee({

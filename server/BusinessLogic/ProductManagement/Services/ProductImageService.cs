@@ -14,7 +14,17 @@ public class ProductImageService : IProductImageService
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBlobStorage _blobStorage;
-    
+
+    public ProductImageService(
+        IProductRepository productRepository,
+        IUnitOfWork unitOfWork,
+        IBlobStorage blobStorage)
+    {
+        _productRepository = productRepository;
+        _unitOfWork = unitOfWork;
+        _blobStorage = blobStorage;
+    }
+
     public async Task SetProductImage(SetProductImageDTO setProductImageDTO)
     {
         var imageExtension = Path.GetExtension(setProductImageDTO.FileName);

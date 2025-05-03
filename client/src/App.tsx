@@ -2,15 +2,15 @@ import { createTheme, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import AddProduct from "./pages/AddProduct";
 import EditEmployee from "./pages/EditEmployee";
-import EditProduct from "./pages/EditProduct";
-import ProductManagement from "./pages/ProductManagement";
 import { AddEmployeeRoute } from "./routes/add-employee";
+import { AddProductRoute } from "./routes/add-product";
+import { EditProductRoute } from "./routes/edit-product";
 import { EmployeeDetailsRoute } from "./routes/employee-details";
 import { EmployeesRoute } from "./routes/employees";
 import { HomeRoute } from "./routes/home";
 import LoginRoute from "./routes/login";
+import { ProductsRoute } from "./routes/products";
 import { ProtectedRoute } from "./routes/protected-route";
 import RegisterRoute from "./routes/register";
 import { CoreLayout } from "./shared/components/core-layout";
@@ -40,12 +40,15 @@ function App() {
                 <Route path={paths.addEmployee.path} element={<AddEmployeeRoute />} />
                 <Route path={paths.employeeDetails.path} element={<EmployeeDetailsRoute />} />
               </Route>
+
+              <Route element={<ProtectedRoute allowedRoles={["BusinessOwner", "Employee"]} />}>
+                <Route path={paths.products.path} element={<ProductsRoute />} />
+                <Route path={paths.addProduct.path} element={<AddProductRoute />} />
+                <Route path={paths.editProduct.path} element={<EditProductRoute />} />
+              </Route>
             </Route>
 
             <Route path="/edit-employee/:id" element={<EditEmployee />} />
-            <Route path="/product-management" element={<ProductManagement />} />
-            <Route path="/add-product" element={<AddProduct />} />
-            <Route path="/edit-product" element={<EditProduct />} />
           </Routes>
         </Router>
       </QueryClientProvider>

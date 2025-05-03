@@ -64,6 +64,8 @@ export function CoreLayout() {
           {user.role === "BusinessOwner" && (
             <NavLink label="Employee management" component={Link} to={paths.employees.getHref()} />
           )}
+
+          <NavLink label="Product management" component={Link} to={paths.products.getHref()} />
         </AppShell.Navbar>
       )}
 
