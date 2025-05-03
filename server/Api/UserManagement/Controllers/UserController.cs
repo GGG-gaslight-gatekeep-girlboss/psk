@@ -38,7 +38,7 @@ public sealed class UserController : ControllerBase
     [Route("employees")]
     public async Task<ActionResult<List<UserDTO>>> GetAllEmployees()
     {
-        return Ok(await _userService.GetAllUsersByRole(nameof(Roles.Client)));
+        return Ok(await _userService.GetAllUsersByRole(nameof(Roles.Employee)));
     }
 
     [HttpGet]

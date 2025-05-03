@@ -3,11 +3,10 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { useCurrentUser } from "./features/users/api/get-current-user";
 import { TokenMetadata } from "./features/users/types";
 import { useUserStore } from "./features/users/user-store";
-import EditEmployee from "./pages/EditEmployee";
 import { AddEmployeeRoute } from "./routes/add-employee";
 import { AddProductRoute } from "./routes/add-product";
+import { EditEmployeeRoute } from "./routes/edit-employee";
 import { EditProductRoute } from "./routes/edit-product";
-import { EmployeeDetailsRoute } from "./routes/employee-details";
 import { EmployeesRoute } from "./routes/employees";
 import { HomeRoute } from "./routes/home";
 import LoginRoute from "./routes/login";
@@ -68,7 +67,7 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={["BusinessOwner"]} />}>
             <Route path={paths.employees.path} element={<EmployeesRoute />} />
             <Route path={paths.addEmployee.path} element={<AddEmployeeRoute />} />
-            <Route path={paths.employeeDetails.path} element={<EmployeeDetailsRoute />} />
+            <Route path={paths.editEmployee.path} element={<EditEmployeeRoute />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["BusinessOwner", "Employee"]} />}>
@@ -77,8 +76,6 @@ function App() {
             <Route path={paths.editProduct.path} element={<EditProductRoute />} />
           </Route>
         </Route>
-
-        <Route path="/edit-employee/:id" element={<EditEmployee />} />
       </Routes>
     </Router>
   );
