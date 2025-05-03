@@ -1,3 +1,4 @@
+using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
@@ -15,16 +16,12 @@ public class UserAuthorizationService : IUserAuthorizationService
 
     public void AuthorizeUserActionOnEmployee(string userId)
     {
-        if (_currentUserAccessor.GetCurrentUserRole() == nameof(Roles.BusinessOwner))
+        if (
+            _currentUserAccessor.GetCurrentUserRole() != nameof(Roles.BusinessOwner)
+            && _currentUserAccessor.GetCurrentUserId() != userId
+        )
         {
-            return;
-        }
-        else
-        {
-            if (_currentUserAccessor.GetCurrentUserId() != userId)
-            {
-                throw new UserNotAuthorizedException();
-            }
+            throw new UserNotAuthorizedException();
         }
     }
 }
