@@ -66,7 +66,7 @@ using (var scope = app.Services.CreateScope())
         Password: builder.Configuration["BusinessOwnerDetails:InitialPassword"]!
     );
 
-    await userService.CreateBusinessOwner(initialBusinessOwnerDTO);
+    await userService.CreateBusinessOwnerIfNeeded(initialBusinessOwnerDTO);
 }
 
 app.UseCors();

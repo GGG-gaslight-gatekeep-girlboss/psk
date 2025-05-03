@@ -159,7 +159,7 @@ public class UserService : IUserService
         return _userMappingService.MapUserToDTO(user, role);
     }
 
-    public async Task CreateBusinessOwner(RegisterUserDTO dto)
+    public async Task CreateBusinessOwnerIfNeeded(RegisterUserDTO dto)
     {
         var businessOwner = (
             await _userManager.GetUsersInRoleAsync(nameof(Roles.BusinessOwner))
