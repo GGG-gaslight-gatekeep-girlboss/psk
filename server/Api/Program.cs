@@ -1,23 +1,33 @@
 using CoffeeShop.Api.Extensions;
 using CoffeeShop.Api.Middlewares;
+using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
+using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using DotNetEnv.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration
-    .AddEnvironmentVariables()
-    .AddDotNetEnv(".env");
+builder.Configuration.AddEnvironmentVariables().AddDotNetEnv(".env");
 
 builder
     .Services.AddSharedServices(builder.Environment, builder.Configuration)
     .AddProductManagement()
     .AddUserManagement(builder.Configuration);
 
-builder.Host.UseSerilog((context, loggerConfig) =>
-    loggerConfig.ReadFrom.Configuration(context.Configuration));
+builder.Host.UseSerilog(
+    (context, loggerConfig) =>
+        loggerConfig
+            .ReadFrom.Configuration(context.Configuration)
+            .Filter.ByExcluding(
+                (e) =>
+                    e.Properties.ContainsKey("RequestPath")
+                    && e.Properties["RequestPath"] is ScalarValue sv
+                    && sv.Value?.ToString() == "/health"
+            )
+);
 
 var app = builder.Build();
 
@@ -48,6 +58,17 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
+
+    var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+    var initialBusinessOwnerDTO = new RegisterUserDTO(
+        FirstName: builder.Configuration["BusinessOwnerDetails:FirstName"]!,
+        LastName: builder.Configuration["BusinessOwnerDetails:LastName"]!,
+        Email: builder.Configuration["BusinessOwnerDetails:Email"]!,
+        PhoneNumber: builder.Configuration["BusinessOwnerDetails:PhoneNumber"]!,
+        Password: builder.Configuration["BusinessOwnerDetails:InitialPassword"]!
+    );
+
+    await userService.CreateBusinessOwnerIfNeeded(initialBusinessOwnerDTO);
 }
 
 app.UseCors();
@@ -67,5 +88,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
 
 app.Run();

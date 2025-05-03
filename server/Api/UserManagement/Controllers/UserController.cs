@@ -11,11 +11,16 @@ namespace CoffeeShop.Api.Controllers;
 public sealed class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IUserAuthorizationService _userAuthorizationService;
     private readonly CookieOptions _cookieOptions;
 
-    public UserController(IUserService userService)
+    public UserController(
+        IUserService userService,
+        IUserAuthorizationService userAuthorizationService
+    )
     {
         _userService = userService;
+        _userAuthorizationService = userAuthorizationService;
         _cookieOptions = new CookieOptions
         {
             HttpOnly = true,
@@ -26,21 +31,31 @@ public sealed class UserController : ControllerBase
     }
 
     [HttpPost]
-    [Route("business-owners")]
-    public async Task<IActionResult> RegisterBusinessOwner([FromBody] RegisterUserDTO request)
-    {
-        var employee = await _userService.CreateUser(request, Roles.BusinessOwner.ToString());
-
-        return Ok(employee);
-    }
-
-    [HttpPost]
     [Route("clients")]
     public async Task<IActionResult> RegisterClient([FromBody] RegisterUserDTO request)
     {
         var client = await _userService.CreateUser(request, Roles.Client.ToString());
 
         return Ok(client);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)}")]
+    [Route("employees")]
+    public async Task<ActionResult<List<UserDTO>>> GetAllEmployees()
+    {
+        return Ok(await _userService.GetAllUsersByRole(nameof(Roles.Client)));
+    }
+
+    [HttpGet]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
+    [Route("employees/{id}")]
+    public async Task<IActionResult> GetEmployee(string id)
+    {
+        _userAuthorizationService.AuthorizeUserActionOnEmployee(id);
+
+        var employee = await _userService.GetUserByIdAndRole(id, nameof(Roles.Employee));
+        return Ok(employee);
     }
 
     [HttpPost]
@@ -55,16 +70,18 @@ public sealed class UserController : ControllerBase
 
     [HttpPatch]
     [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
-    [Route("employees/{id:Guid}")]
+    [Route("employees/{id}")]
     public async Task<IActionResult> UpdateEmployee(string id, [FromBody] UpdateUserDTO request)
     {
+        _userAuthorizationService.AuthorizeUserActionOnEmployee(id);
+
         var employee = await _userService.UpdateUser(id, request);
         return Ok(employee);
     }
 
     [HttpDelete]
     [Authorize(Roles = $"{nameof(Roles.BusinessOwner)}")]
-    [Route("employees/{id:Guid}")]
+    [Route("employees/{id}")]
     public async Task<IActionResult> DeleteEmployee(string id)
     {
         await _userService.DeleteUser(id);

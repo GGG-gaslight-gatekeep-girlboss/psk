@@ -1,6 +1,7 @@
 using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
+using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +10,6 @@ namespace CoffeeShop.BusinessLogic.UserManagement.Services;
 
 public class UserService : IUserService
 {
-    // TODO add user authorization service to validate actions based on user id and role
     private readonly UserManager<User> _userManager;
     private readonly IUserMappingService _userMappingService;
     private readonly ITokenService _tokenService;
@@ -135,6 +135,39 @@ public class UserService : IUserService
         else
         {
             throw new UserNotAuthenticatedException("Invalid user credentials.");
+        }
+    }
+
+    public async Task<List<UserDTO>> GetAllUsersByRole(string role)
+    {
+        var usersInRole = await _userManager.GetUsersInRoleAsync(role);
+        return usersInRole.Select(user => _userMappingService.MapUserToDTO(user, role)).ToList();
+    }
+
+    public async Task<UserDTO> GetUserByIdAndRole(string id, string role)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+
+        if (user == null)
+            throw new UserNotFoundException(id);
+
+        var hasRole = await _userManager.IsInRoleAsync(user, role);
+
+        if (!hasRole)
+            throw new UserNotFoundException(id);
+
+        return _userMappingService.MapUserToDTO(user, role);
+    }
+
+    public async Task CreateBusinessOwnerIfNeeded(RegisterUserDTO dto)
+    {
+        var businessOwner = (
+            await _userManager.GetUsersInRoleAsync(nameof(Roles.BusinessOwner))
+        ).FirstOrDefault();
+
+        if (businessOwner is null)
+        {
+            await CreateUser(dto, nameof(Roles.BusinessOwner));
         }
     }
 }

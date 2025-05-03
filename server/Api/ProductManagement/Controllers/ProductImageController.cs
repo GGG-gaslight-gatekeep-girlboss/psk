@@ -1,4 +1,6 @@
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
+using CoffeeShop.BusinessLogic.UserManagement.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeShop.Api.ProductManagement.Controllers;
@@ -17,6 +19,7 @@ public class ProductImageController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
     public async Task<IActionResult> SetProductImage([FromRoute] Guid productId, IFormFile image)
     {
         var setProductImageDTO = _productMappingService.MapSetProductImageDTO(productId, image);
