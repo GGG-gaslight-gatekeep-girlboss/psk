@@ -16,3 +16,11 @@ export const showSuccessNotification = ({ message }: { message: string }) => {
     withBorder: true,
   });
 };
+
+export const showInfoNotification = ({ message }: { message: string }) => {
+  notifications.show({
+    message,
+    color: "blue",
+    withBorder: true,
+  });
+};
