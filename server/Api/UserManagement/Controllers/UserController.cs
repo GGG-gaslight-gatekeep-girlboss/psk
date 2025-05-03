@@ -12,22 +12,16 @@ public sealed class UserController : ControllerBase
 {
     private readonly IUserService _userService;
     private readonly IUserAuthorizationService _userAuthorizationService;
-    private readonly CookieOptions _cookieOptions;
+    private readonly ICurrentUserAccessor _currentUserAccessor;
 
     public UserController(
         IUserService userService,
-        IUserAuthorizationService userAuthorizationService
-    )
+        IUserAuthorizationService userAuthorizationService,
+        ICurrentUserAccessor currentUserAccessor)
     {
         _userService = userService;
         _userAuthorizationService = userAuthorizationService;
-        _cookieOptions = new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Lax,
-            Expires = DateTime.UtcNow.Add(BusinessLogic.UserManagement.Constants.JWTExpiryTime),
-        };
+        _currentUserAccessor = currentUserAccessor;
     }
 
     [HttpPost]
@@ -56,6 +50,18 @@ public sealed class UserController : ControllerBase
 
         var employee = await _userService.GetUserByIdAndRole(id, nameof(Roles.Employee));
         return Ok(employee);
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("me")]
+    public async Task<ActionResult<UserDTO>> GetCurrentUser()
+    {
+        var user = await _userService.GetUserByIdAndRole(
+            _currentUserAccessor.GetCurrentUserId(),
+            _currentUserAccessor.GetCurrentUserRole());
+
+        return Ok(user);
     }
 
     [HttpPost]
@@ -90,15 +96,15 @@ public sealed class UserController : ControllerBase
 
     [HttpPost]
     [Route("login")]
-    public async Task<IActionResult> LoginUser([FromBody] LoginUserDTO request)
+    public async Task<ActionResult<LoginResponseDTO>> LoginUser([FromBody] LoginUserDTO request)
     {
-        var (user, token) = await _userService.AuthenticateUser(request);
+        var loginResponse = await _userService.AuthenticateUser(request);
         Response.Cookies.Append(
             UserManagement.Constants.AccessTokenName,
-            token.AccessToken,
-            _cookieOptions
+            loginResponse.AccessToken.Token,
+            GetAccessTokenCookieOptions(loginResponse.AccessToken)
         );
-        return Ok(user);
+        return Ok(loginResponse);
     }
 
     [HttpPost]
@@ -108,7 +114,18 @@ public sealed class UserController : ControllerBase
     [Route("logout")]
     public IActionResult LogoutUser()
     {
-        Response.Cookies.Delete(UserManagement.Constants.AccessTokenName, _cookieOptions);
+        Response.Cookies.Delete(UserManagement.Constants.AccessTokenName);
         return Ok();
+    }
+
+    private static CookieOptions GetAccessTokenCookieOptions(TokenDTO accessToken)
+    {
+        return new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Lax,
+            Expires = accessToken.ExpiresAt
+        };
     }
 }

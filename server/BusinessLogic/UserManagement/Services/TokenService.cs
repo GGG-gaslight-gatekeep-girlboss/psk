@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +22,7 @@ public class TokenService : ITokenService
         _jwtIssuer = configuration["JWT:Issuer"]!;
     }
 
-    public string GenerateAccessToken(User user, string role)
+    public TokenDTO GenerateAccessToken(User user, string role)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtSigningKey);
@@ -45,6 +46,8 @@ public class TokenService : ITokenService
             ),
         };
 
-        return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+        var token = tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+
+        return new TokenDTO(token, tokenDescriptor.Expires.Value);
     }
 }
