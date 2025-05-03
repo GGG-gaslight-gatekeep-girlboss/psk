@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { api } from "../../../shared/config/api-client";
 import { MutationConfig } from "../../../shared/config/react-query";
-import { User } from "../types";
+import { LoginResponse } from "../types";
 
 export const loginInputSchema = z.object({
   email: z.string().min(1, "Email is required."),
@@ -11,7 +11,7 @@ export const loginInputSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginInputSchema>;
 
-export const login = ({ data }: { data: LoginInput }): Promise<User> => {
+export const login = ({ data }: { data: LoginInput }): Promise<LoginResponse> => {
   return api.post("/v1/users/login", data);
 };
 

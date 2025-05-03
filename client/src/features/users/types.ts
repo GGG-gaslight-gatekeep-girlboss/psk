@@ -10,7 +10,11 @@ export type User = {
 };
 
 export type Token = {
-  value: string;
+  token: string;
+  expiresAt: string;
+};
+
+export type TokenMetadata = {
   expiresAt: string;
 };
 

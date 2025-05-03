@@ -2,9 +2,11 @@ import { Anchor, Button, Container, Paper, PasswordInput, Stack, Text, TextInput
 import { useForm } from "@mantine/form";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginInput, useLogin } from "../features/users/api/login";
+import { TokenMetadata } from "../features/users/types";
 import { useUserStore } from "../features/users/user-store";
 import { paths } from "../shared/config/paths";
 import { usePageTitle } from "../shared/hooks/use-page-title";
+import { setLocalStorageItem } from "../shared/utils/local-storage";
 import { showSuccessNotification } from "../shared/utils/notifications";
 
 export const LoginRoute = () => {
@@ -22,9 +24,16 @@ export const LoginRoute = () => {
 
   const loginMutation = useLogin({
     mutationConfig: {
-      onSuccess: (user) => {
+      onSuccess: (data) => {
         showSuccessNotification({ message: "Welcome back mate!" });
-        setUser(user);
+
+        const accessTokenMetadata: TokenMetadata = {
+          expiresAt: data.accessToken.expiresAt,
+        };
+        setLocalStorageItem({ key: "coffeeshop-access-token-metadata", value: accessTokenMetadata });
+
+        setUser(data.user);
+
         navigate(paths.home.getHref());
       },
     },

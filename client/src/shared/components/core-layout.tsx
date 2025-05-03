@@ -3,6 +3,7 @@ import { Link, Outlet } from "react-router-dom";
 import { useLogout } from "../../features/users/api/logout";
 import { useUserStore } from "../../features/users/user-store";
 import { paths } from "../config/paths";
+import { removeLocalStorageItem } from "../utils/local-storage";
 import { showSuccessNotification } from "../utils/notifications";
 
 export function CoreLayout() {
@@ -15,6 +16,7 @@ export function CoreLayout() {
       onSuccess: () => {
         showSuccessNotification({ message: "Goodbye mate!" });
         setUser(null);
+        removeLocalStorageItem({ key: "coffeeshop-access-token-metadata" });
       },
     },
   });

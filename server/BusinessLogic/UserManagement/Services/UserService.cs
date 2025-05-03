@@ -116,7 +116,7 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<(UserDTO, TokenDTO)> AuthenticateUser(LoginUserDTO dto)
+    public async Task<LoginResponseDTO> AuthenticateUser(LoginUserDTO dto)
     {
         if (
             await _userManager.FindByEmailAsync(dto.Email) is { } user
@@ -126,11 +126,8 @@ public class UserService : IUserService
         {
             var role = (await _userManager.GetRolesAsync(user)).First();
             var accessToken = _tokenService.GenerateAccessToken(user, role!);
-
-            return (
-                _userMappingService.MapUserToDTO(user, role!),
-                _userMappingService.MapTokenDTO(accessToken)
-            );
+            var userDTO = _userMappingService.MapUserToDTO(user, role!);
+            return new LoginResponseDTO(userDTO, accessToken);
         }
         else
         {
