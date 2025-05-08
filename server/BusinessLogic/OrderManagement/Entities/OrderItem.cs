@@ -9,7 +9,7 @@ public class OrderItem : BaseEntity
     public Order Order { get; set; } = null!;
 
     public Guid? ProductId { get; set; }
-    public Product Product { get; set; } = null!;
+    public Product? Product { get; set; }
     
     public required int Quantity { get; set; }
 }
