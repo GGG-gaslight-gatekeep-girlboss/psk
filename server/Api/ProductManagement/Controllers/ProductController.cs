@@ -18,6 +18,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
     public async Task<ActionResult<ProductDTO>> CreateProduct([FromBody] CreateProductDTO request)
     {
         return Ok(await _productService.CreateProduct(request));
