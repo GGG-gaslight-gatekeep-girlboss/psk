@@ -34,6 +34,7 @@ public class OrderMappingService : IOrderMappingService{
             order.Id,
             order.OrderStatus,
             mappedItems,
+            order.TotalPrice(),
             order.PickupTime
         );
     }
