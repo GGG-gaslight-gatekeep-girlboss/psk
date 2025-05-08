@@ -1,6 +1,7 @@
 using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
 using CoffeeShop.BusinessLogic.OrderManagement.Entities;
+using CoffeeShop.BusinessLogic.ProductManagement.DTOs;
 
 namespace CoffeeShop.BusinessLogic.OrderManagement.Services;
 
@@ -28,27 +29,12 @@ public class OrderMappingService : IOrderMappingService{
         return mappedItems;
     }
 
-    public OrderDTO MapOrderToOrderDTO(Order order){
-        List<OrderItemDTO> mappedItems = MapOrderItemToOrderItemDTO(order.Items);
+    public OrderDTO MapOrderToOrderDTO(Order order, List<OrderItemDTO> mappedItems){
         return new OrderDTO(
             order.Id,
-            order.CreatedById!,
             order.OrderStatus,
             mappedItems,
             order.PickupTime
         );
-    }
-
-    private List<OrderItemDTO> MapOrderItemToOrderItemDTO(List<OrderItem> items){
-        List<OrderItemDTO> mappedItems = new();
-        foreach (var item in items)
-        {
-            mappedItems.Add(new OrderItemDTO(
-                item.ProductId,
-                item.Product?.Name,
-                item.Quantity
-            ));
-        }
-        return mappedItems;
     }
 }

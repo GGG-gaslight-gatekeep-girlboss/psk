@@ -11,17 +11,20 @@ namespace CoffeeShop.BusinessLogic.OrderManagement.Services;
 public class OrderService : IOrderService {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IProductService _productService;
     private readonly IOrderMappingService _orderMappingService;
     private readonly IUnitOfWork _unitOfWork;
 
     public OrderService(
         IOrderRepository orderRepository,
         IProductRepository productRepository,
+        IProductService productService,
         IOrderMappingService orderMappingService,
         IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _productService = productService;
         _orderMappingService = orderMappingService;
         _unitOfWork = unitOfWork;
     }
@@ -33,10 +36,17 @@ public class OrderService : IOrderService {
         var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, Status.Pending.ToString());
         await UpdateProductStock(order.Items);
         _orderRepository.Add(order);
-
         await _unitOfWork.SaveChanges();
 
-        return _orderMappingService.MapOrderToOrderDTO(order);
+        List<OrderItemDTO> mappedItems = new();
+        foreach(var item in dto.Items){
+            var productDTO = await _productService.GetProduct(item.ProductId);
+            mappedItems.Add(new OrderItemDTO(
+                productDTO,
+                item.Quantity
+            ));
+        }
+        return _orderMappingService.MapOrderToOrderDTO(order, mappedItems);
     }
 
     private void ValidatePickupTime(DateTimeOffset pickupTime){
