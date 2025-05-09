@@ -7,6 +7,8 @@ using CoffeeShop.Api.UserManagement;
 using CoffeeShop.Api.UserManagement.Services;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.Common.Services;
+using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
+using CoffeeShop.BusinessLogic.OrderManagement.Services;
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
 using CoffeeShop.BusinessLogic.ProductManagement.Services;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
@@ -14,6 +16,7 @@ using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Services;
 using CoffeeShop.DataAccess;
 using CoffeeShop.DataAccess.Common.Repositories;
+using CoffeeShop.DataAccess.OrderManagement.Repositories;
 using CoffeeShop.DataAccess.ProductManagement.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -164,5 +167,14 @@ public static class ConfigureServicesExtensions
 
             return new CloudflareBlobStorage(s3Client, configuration);
         });
+    }
+
+    public static IServiceCollection AddOrderManagement(this IServiceCollection services)
+    {
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOrderMappingService, OrderMappingService>();
+        services.AddScoped<IOrderService, OrderService>();
+
+        return services;
     }
 }
