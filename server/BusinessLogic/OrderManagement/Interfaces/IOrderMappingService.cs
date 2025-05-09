@@ -1,9 +1,10 @@
 using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
 using CoffeeShop.BusinessLogic.OrderManagement.Entities;
+using CoffeeShop.BusinessLogic.OrderManagement.Enums;
 
 namespace CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 
 public interface IOrderMappingService{
-    Order MapCreateOrderDTOToOrder(CreateOrderDTO dto, string orderStatus);
+    Order MapCreateOrderDTOToOrder(CreateOrderDTO dto, Status orderStatus);
     OrderDTO MapOrderToOrderDTO(Order order, List<OrderItemDTO> mappedItems);
 }

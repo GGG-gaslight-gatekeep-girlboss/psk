@@ -17,7 +17,8 @@ public class OrderConfiguration : BaseEntityConfiguration<Order>{
             .IsRequired();
 
         builder.Property(o => o.OrderStatus)
-            .IsRequired();
+               .HasConversion<string>()
+               .IsRequired();
 
         builder.HasMany(o => o.Items)
             .WithOne()
