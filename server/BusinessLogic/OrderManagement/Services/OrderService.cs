@@ -118,7 +118,7 @@ public class OrderService : IOrderService {
         if (pickupTime <= now)
             throw new InvalidDomainValueException("Pickup time must be in the future.");
 
-        var pickupLocalTime = pickupTime.ToLocalTime().TimeOfDay;
+        var pickupLocalTime = TimeOnly.FromTimeSpan(pickupTime.ToLocalTime().TimeOfDay);
         if (pickupLocalTime < Constants.Open || pickupLocalTime > Constants.Close)
             throw new InvalidDomainValueException($"Pickup time must be between {Constants.Open:hh\\:mm} and {Constants.Close:hh\\:mm}.");
     }
@@ -128,7 +128,7 @@ public class OrderService : IOrderService {
         foreach (var dto in dtos){
             var product = await _productRepository.Get(dto.ProductId);
             if(dto.Quantity <= 0)
-                throw new InvalidDomainValueException("The order quantity must be a positive non-zero value.");
+                throw new InvalidDomainValueException("Order item quantity must be positive.");
 
             if(product.Stock < dto.Quantity)
                 throw new InvalidDomainValueException($"The order quantity of {product.Name} exceeds the available stock.");

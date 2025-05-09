@@ -12,7 +12,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository{
     public async Task<List<Order>> GetAllByUserId(string userId)
     {
         return await DbSet
-            .Where(order => EF.Property<string>(order, "CreatedById") == userId && !order.IsDeleted)
+            .Where(order => order.CreatedById == userId && !order.IsDeleted)
             .Include(order => order.Items)
             .ToListAsync();
     }

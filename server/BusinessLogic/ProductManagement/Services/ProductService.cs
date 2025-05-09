@@ -50,7 +50,6 @@ public class ProductService : IProductService
      public async Task DeleteProduct(Guid id)
     {
         await _productRepository.Delete(id);
-        await _unitOfWork.SaveChanges();
     }
 
     public async Task<ProductDTO> UpdateProduct(Guid id, UpdateProductDTO dto)
