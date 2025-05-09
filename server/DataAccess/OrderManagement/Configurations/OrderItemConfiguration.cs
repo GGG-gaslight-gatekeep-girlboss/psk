@@ -9,7 +9,8 @@ public class OrderItemConfiguration : BaseEntityConfiguration<OrderItem>{
     
     private const string TableName = "OrderItem";
 
-    public override void Configure(EntityTypeBuilder<OrderItem> builder){
+    public override void Configure(EntityTypeBuilder<OrderItem> builder)
+    {
         base.Configure(builder);
 
          builder.Property(oi => oi.Quantity)
@@ -18,7 +19,7 @@ public class OrderItemConfiguration : BaseEntityConfiguration<OrderItem>{
         builder.HasOne(oi => oi.Order)
             .WithMany(o => o.Items)
             .HasForeignKey(oi => oi.OrderId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .IsRequired();
 
         builder.HasOne(oi => oi.Product)
             .WithMany()

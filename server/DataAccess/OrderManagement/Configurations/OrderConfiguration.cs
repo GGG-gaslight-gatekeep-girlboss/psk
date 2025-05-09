@@ -9,7 +9,8 @@ public class OrderConfiguration : BaseEntityConfiguration<Order>{
 
     private const string TableName = "Order";
 
-    public override void Configure(EntityTypeBuilder<Order> builder){
+    public override void Configure(EntityTypeBuilder<Order> builder)
+    {
         base.Configure(builder);
 
         builder.Property(p => p.PickupTime)
@@ -21,6 +22,9 @@ public class OrderConfiguration : BaseEntityConfiguration<Order>{
         builder.HasMany(o => o.Items)
             .WithOne()
             .HasForeignKey("OrderId");
+
+        builder.Property(o => o.IsDeleted)
+            .HasDefaultValue(false);
 
         builder.ToTable(TableName);
     }

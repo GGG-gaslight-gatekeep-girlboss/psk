@@ -9,15 +9,18 @@ namespace CoffeeShop.DataAccess.OrderManagement.Repositories;
 public class OrderRepository : BaseRepository<Order>, IOrderRepository{
     public OrderRepository(ApplicationDbContext dbContext) : base(dbContext) { }
 
-    public async Task<List<Order>> GetAllByUserId(string userId){
+    public async Task<List<Order>> GetAllByUserId(string userId)
+    {
         return await DbSet
-            .Where(order => EF.Property<string>(order, "CreatedById") == userId)
+            .Where(order => EF.Property<string>(order, "CreatedById") == userId && !order.IsDeleted)
             .Include(order => order.Items)
             .ToListAsync();
     }
 
-    public async Task<List<Order>> GetAllWithItems(){
+    public async Task<List<Order>> GetAllWithItems()
+    {
         return await DbSet
+            .Where(order => !order.IsDeleted)
             .Include(order => order.Items)
             .ToListAsync();
     }
@@ -25,7 +28,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository{
     public async Task<Order> GetWithItems(Guid id)
     {
         var entity = await DbSet
-            .Where(x => x.Id == id)
+            .Where(x => x.Id == id && !x.IsDeleted)
             .Include(x => x.Items)
             .FirstOrDefaultAsync();
 

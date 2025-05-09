@@ -36,19 +36,22 @@ public class OrderService : IOrderService {
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<OrderDTO> CreateOrder(CreateOrderDTO dto){
+    public async Task<OrderDTO> CreateOrder(CreateOrderDTO dto)
+    {
         ValidatePickupTime(dto.PickupTime);
         await ValidateOrderItems(dto.Items);
 
         var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, Status.Pending.ToString());
         await UpdateProductStock(order.Items);
         _orderRepository.Add(order);
+
         await _unitOfWork.SaveChanges();
 
         return await MapEnrichedOrderToDTO(order);
     }
 
-    public async Task<List<OrderDTO>> GetAllOrders(){
+    public async Task<List<OrderDTO>> GetAllOrders()
+    {
         var role =  _currentUserAccessor.GetCurrentUserRole();
         var userId = _currentUserAccessor.GetCurrentUserId();
 
@@ -68,11 +71,12 @@ public class OrderService : IOrderService {
         return mappedOrders;
     }
 
-    public async Task<OrderDTO> GetOrder(Guid id){
+    public async Task<OrderDTO> GetOrder(Guid id)
+    {
         var order = await _orderRepository.GetWithItems(id);
-
         var role =  _currentUserAccessor.GetCurrentUserRole();
         var userId = _currentUserAccessor.GetCurrentUserId();
+
         if(role == Roles.Client.ToString() && order.CreatedById != userId){
             throw new UserNotAuthorizedException();
         }
@@ -80,7 +84,36 @@ public class OrderService : IOrderService {
         return await MapEnrichedOrderToDTO(order);
     }
 
-    private void ValidatePickupTime(DateTimeOffset pickupTime){
+    public async Task<OrderDTO> UpdateOrderStatus(Guid id, UpdateOrderDTO request)
+    {
+        var order = await _orderRepository.GetWithItems(id);
+
+        try {
+            Status enumStatus = Enum.Parse<Status>(request.OrderStatus, ignoreCase: true);
+            order.OrderStatus = enumStatus.ToString();
+        } catch(ArgumentException) {
+            throw new InvalidDomainValueException($"{request.OrderStatus} is not a valid order status.");
+        }
+
+        _orderRepository.Update(order);
+
+        await _unitOfWork.SaveChanges();
+
+        return await MapEnrichedOrderToDTO(order);
+    }
+
+    public async Task DeleteOrder(Guid id)
+    {
+        var order = await _orderRepository.Get(id);
+        
+        order.IsDeleted = true;
+        _orderRepository.Update(order);
+
+        await _unitOfWork.SaveChanges();
+    }
+
+    private void ValidatePickupTime(DateTimeOffset pickupTime)
+    {
         var now = DateTimeOffset.UtcNow;
         if (pickupTime <= now)
             throw new InvalidDomainValueException("Pickup time must be in the future.");
@@ -90,7 +123,8 @@ public class OrderService : IOrderService {
             throw new InvalidDomainValueException($"Pickup time must be between {Constants.Open:hh\\:mm} and {Constants.Close:hh\\:mm}.");
     }
 
-    private async Task ValidateOrderItems(List<CreateOrderItemDTO> dtos){
+    private async Task ValidateOrderItems(List<CreateOrderItemDTO> dtos)
+    {
         foreach (var dto in dtos){
             var product = await _productRepository.Get(dto.ProductId);
             if(dto.Quantity <= 0)
@@ -101,7 +135,8 @@ public class OrderService : IOrderService {
         }
     }
 
-    private async Task UpdateProductStock(List<OrderItem> items){
+    private async Task UpdateProductStock(List<OrderItem> items)
+    {
         foreach(var item in items){
             if (!item.ProductId.HasValue)
                 throw new InvalidDomainValueException("ProductId cannot be null when updating stock.");
@@ -130,7 +165,7 @@ public class OrderService : IOrderService {
                 );
                 items.Add(new OrderItemDTO(
                     deletedProductDTO,
-                    item.Quantity
+                    0
                 ));
                 continue;
             }

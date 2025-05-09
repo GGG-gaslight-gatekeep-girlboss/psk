@@ -6,4 +6,6 @@ public interface IOrderService{
     Task<OrderDTO> CreateOrder(CreateOrderDTO dto);
     Task<List<OrderDTO>> GetAllOrders();
     Task<OrderDTO> GetOrder(Guid id);
+    Task<OrderDTO> UpdateOrderStatus(Guid id, UpdateOrderDTO request);
+    Task DeleteOrder(Guid id);
 }

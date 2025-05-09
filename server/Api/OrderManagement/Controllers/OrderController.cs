@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
+using CoffeeShop.BusinessLogic.UserManagement.Enums;
 
 namespace CoffeeShop.Api.OrderManagement.Controllers;
 
@@ -15,7 +17,6 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
-    //TODO: Make endpoints
     [HttpPost]
     public async Task<ActionResult<OrderDTO>> CreateOrder([FromBody] CreateOrderDTO request)
     {
@@ -35,4 +36,22 @@ public class OrderController : ControllerBase
     {
         return Ok(await _orderService.GetOrder(id));
     }
+
+    [HttpPatch]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
+    [Route("{id:Guid}")]
+    public async Task<ActionResult<OrderDTO>> UpdateOrderStatus(Guid id, [FromBody] UpdateOrderDTO request)
+    {
+        var order = await _orderService.UpdateOrderStatus(id, request);
+        return Ok(order);
+    }
+
+    [HttpDelete]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
+    [Route("{id:Guid}")]
+    public async Task<IActionResult> DeleteOrder(Guid id)
+    {
+        await _orderService.DeleteOrder(id);
+        return NoContent();
+    } 
 }
