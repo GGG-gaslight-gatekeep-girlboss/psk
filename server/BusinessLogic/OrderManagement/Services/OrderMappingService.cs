@@ -34,6 +34,7 @@ public class OrderMappingService : IOrderMappingService{
     {
         return new OrderDTO(
             order.Id,
+            order.CreatedById,
             order.OrderStatus,
             mappedItems,
             order.TotalPrice(),
