@@ -89,7 +89,7 @@ public class OrderService : IOrderService {
         var order = await _orderRepository.GetWithItems(id);
 
         try {
-            Status enumStatus = Enum.Parse<Status>(request.OrderStatus, ignoreCase: true);
+            Status enumStatus = Enum.Parse<Status>(request.OrderStatus.Trim(), ignoreCase: true);
             order.OrderStatus = enumStatus.ToString();
         } catch(ArgumentException) {
             throw new InvalidDomainValueException($"{request.OrderStatus} is not a valid order status.");
