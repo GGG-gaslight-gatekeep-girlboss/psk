@@ -24,9 +24,19 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = $"{nameof(Roles.BusinessOwner)},{nameof(Roles.Employee)}")]
     public async Task<ActionResult<List<OrderDTO>>> GetAllOrders()
     {
         var orders = await _orderService.GetAllOrders();
+        return Ok(orders);
+    }
+
+    [HttpGet]
+    [Authorize]
+    [Route("me")]
+    public async Task<ActionResult<List<OrderDTO>>> GetCurrentUserOrders()
+    {
+        var orders = await _orderService.GetCurrentUserOrders();
         return Ok(orders);
     }
 

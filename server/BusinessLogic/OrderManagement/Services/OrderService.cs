@@ -52,16 +52,19 @@ public class OrderService : IOrderService {
 
     public async Task<List<OrderDTO>> GetAllOrders()
     {
-        var role =  _currentUserAccessor.GetCurrentUserRole();
-        var userId = _currentUserAccessor.GetCurrentUserId();
+        var orders = await _orderRepository.GetAllWithItems();
 
-        List<Order> orders = new();
-        if (role == Roles.Client.ToString())
+        List<OrderDTO> mappedOrders = new();
+        foreach (var order in orders)
         {
-            orders = await _orderRepository.GetAllByUserId(userId);
-        } else {
-            orders = await _orderRepository.GetAllWithItems();
+            mappedOrders.Add(await MapEnrichedOrderToDTO(order));
         }
+        return mappedOrders;
+    }
+
+    public async Task<List<OrderDTO>> GetCurrentUserOrders(){
+        var userId = _currentUserAccessor.GetCurrentUserId();
+        var orders = await _orderRepository.GetAllByUserId(userId);
 
         List<OrderDTO> mappedOrders = new();
         foreach (var order in orders)
