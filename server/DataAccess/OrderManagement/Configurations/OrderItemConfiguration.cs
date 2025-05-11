@@ -13,7 +13,13 @@ public class OrderItemConfiguration : BaseEntityConfiguration<OrderItem>{
     {
         base.Configure(builder);
 
-         builder.Property(oi => oi.Quantity)
+        builder.Property(oi => oi.Quantity)
+            .IsRequired();
+
+        builder.Property(oi => oi.ProductName)
+            .IsRequired();
+
+        builder.Property(oi => oi.ProductPrice)
             .IsRequired();
 
         builder.HasOne(oi => oi.Order)

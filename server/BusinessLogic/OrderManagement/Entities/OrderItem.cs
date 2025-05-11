@@ -10,6 +10,8 @@ public class OrderItem : BaseEntity
 
     public Guid? ProductId { get; set; }
     public Product? Product { get; set; }
-    
+
+    public required string ProductName { get; set; }
+    public required decimal ProductPrice { get; set; }
     public required int Quantity { get; set; }
 }

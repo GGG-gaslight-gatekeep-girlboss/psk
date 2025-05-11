@@ -5,7 +5,6 @@ using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
 using CoffeeShop.BusinessLogic.OrderManagement.Enums;
 using CoffeeShop.BusinessLogic.OrderManagement.Entities;
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
-using CoffeeShop.BusinessLogic.ProductManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
@@ -16,7 +15,6 @@ public class OrderService : IOrderService {
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderMappingService _orderMappingService;
     private readonly IProductRepository _productRepository;
-    private readonly IProductService _productService;
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -24,14 +22,12 @@ public class OrderService : IOrderService {
         IOrderRepository orderRepository,
         IOrderMappingService orderMappingService,
         IProductRepository productRepository,
-        IProductService productService,
         ICurrentUserAccessor currentUserAccessor,
         IUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
         _orderMappingService = orderMappingService;
         _productRepository = productRepository;
-        _productService = productService;
         _currentUserAccessor = currentUserAccessor;
         _unitOfWork = unitOfWork;
     }
@@ -41,13 +37,15 @@ public class OrderService : IOrderService {
         ValidatePickupTime(dto.PickupTime);
         await ValidateOrderItems(dto.Items);
 
-        var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, Status.Pending);
+        List<OrderItem> items = await MapCreateOrderItemDTOToOrderItem(dto.Items);
+        var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, items, Status.Pending);
+
         await UpdateProductStock(order.Items);
         _orderRepository.Add(order);
 
         await _unitOfWork.SaveChanges();
 
-        return await MapEnrichedOrderToDTO(order);
+        return _orderMappingService.MapOrderToOrderDTO(order);
     }
 
     public async Task<List<OrderDTO>> GetAllOrders()
@@ -57,7 +55,7 @@ public class OrderService : IOrderService {
         List<OrderDTO> mappedOrders = new();
         foreach (var order in orders)
         {
-            mappedOrders.Add(await MapEnrichedOrderToDTO(order));
+            mappedOrders.Add(_orderMappingService.MapOrderToOrderDTO(order));
         }
         return mappedOrders;
     }
@@ -69,7 +67,7 @@ public class OrderService : IOrderService {
         List<OrderDTO> mappedOrders = new();
         foreach (var order in orders)
         {
-            mappedOrders.Add(await MapEnrichedOrderToDTO(order));
+            mappedOrders.Add(_orderMappingService.MapOrderToOrderDTO(order));
         }
         return mappedOrders;
     }
@@ -84,7 +82,7 @@ public class OrderService : IOrderService {
             throw new UserNotAuthorizedException();
         }
 
-        return await MapEnrichedOrderToDTO(order);
+        return _orderMappingService.MapOrderToOrderDTO(order);
     }
 
     public async Task<OrderDTO> UpdateOrderStatus(Guid id, UpdateOrderDTO request)
@@ -102,7 +100,7 @@ public class OrderService : IOrderService {
 
         await _unitOfWork.SaveChanges();
 
-        return await MapEnrichedOrderToDTO(order);
+        return _orderMappingService.MapOrderToOrderDTO(order);
     }
 
     public async Task DeleteOrder(Guid id)
@@ -150,34 +148,19 @@ public class OrderService : IOrderService {
         }
     }
 
-    private async Task<OrderDTO> MapEnrichedOrderToDTO(Order order)
-    {
-        var items = new List<OrderItemDTO>();
-        foreach (var item in order.Items)
+    private async Task<List<OrderItem>> MapCreateOrderItemDTOToOrderItem(List<CreateOrderItemDTO> dtos){
+        var items = new List<OrderItem>();
+        foreach (var dto in dtos)
         {
-            if (!item.ProductId.HasValue)
-            {
-                var deletedProductDTO = new ProductDTO
-                (
-                    Guid.Empty,
-                    "Deleted Product",
-                    "This product is no longer available",
-                    0,
-                    0,
-                    null
-                );
-                items.Add(new OrderItemDTO(
-                    deletedProductDTO,
-                    0
-                ));
-                continue;
-            }
-
-            var productDTO = await _productService.GetProduct(item.ProductId.Value);
-            items.Add(new OrderItemDTO(productDTO, item.Quantity));
+            var product = await _productRepository.Get(dto.ProductId);
+            items.Add(new OrderItem{
+                ProductId = dto.ProductId,
+                ProductName = product.Name,
+                ProductPrice = product.Price,
+                Quantity = dto.Quantity
+            });
         }
-
-        return _orderMappingService.MapOrderToOrderDTO(order, items);
+        return items;
     }
 
 }

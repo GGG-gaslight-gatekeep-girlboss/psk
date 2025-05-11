@@ -3,6 +3,8 @@ using CoffeeShop.BusinessLogic.ProductManagement.DTOs;
 namespace CoffeeShop.BusinessLogic.OrderManagement.DTOs;
 
 public sealed record OrderItemDTO(
-    ProductDTO productDTO,
+    Guid ProductId,
+    string ProductName,
+    decimal ProductPrice,
     int Quantity
 );

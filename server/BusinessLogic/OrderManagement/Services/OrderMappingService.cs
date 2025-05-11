@@ -6,9 +6,11 @@ using CoffeeShop.BusinessLogic.OrderManagement.Enums;
 namespace CoffeeShop.BusinessLogic.OrderManagement.Services;
 
 public class OrderMappingService : IOrderMappingService{
-    public Order MapCreateOrderDTOToOrder(CreateOrderDTO dto, Status orderStatus)
+    public Order MapCreateOrderDTOToOrder(
+        CreateOrderDTO dto, 
+        List<OrderItem> mappedItems, 
+        Status orderStatus)
     {
-        List<OrderItem> mappedItems = MapCreateOrderItemDTOToOrderItem(dto.Items);
         return new Order
         {
             PickupTime = dto.PickupTime,
@@ -17,29 +19,43 @@ public class OrderMappingService : IOrderMappingService{
         };
     }
 
-    private List<OrderItem> MapCreateOrderItemDTOToOrderItem(List<CreateOrderItemDTO> dtos)
+    public OrderDTO MapOrderToOrderDTO(Order order)
     {
-        List<OrderItem> mappedItems = new();
-        foreach (var dto in dtos)
-        {
-            mappedItems.Add(new OrderItem
-            {
-                ProductId = dto.ProductId,
-                Quantity = dto.Quantity
-            });
-        }
-        return mappedItems;
-    }
-
-    public OrderDTO MapOrderToOrderDTO(Order order, List<OrderItemDTO> mappedItems)
-    {
+        List<OrderItemDTO> mappedItems = MapOrderItemToOrderItemDTO(order.Items);
         return new OrderDTO(
             order.Id,
             order.CreatedById!,
             order.OrderStatus.ToString(),
             mappedItems,
-            order.TotalPrice(),
+            order.TotalPrice,
             order.PickupTime
         );
+    }
+
+    private List<OrderItemDTO> MapOrderItemToOrderItemDTO(List<OrderItem> items)
+    {
+        var mappedItems = new List<OrderItemDTO>();
+        foreach (var item in items)
+        {
+            if (!item.ProductId.HasValue)
+            {
+                mappedItems.Add(new OrderItemDTO(
+                    Guid.Empty,
+                    "Deleted Product",
+                    item.ProductPrice,
+                    item.Quantity
+                ));
+                continue;
+            }
+
+            mappedItems.Add(new OrderItemDTO(
+                item.ProductId.Value,
+                item.ProductName,
+                item.ProductPrice,
+                item.Quantity
+            ));
+        }
+
+        return mappedItems;
     }
 }

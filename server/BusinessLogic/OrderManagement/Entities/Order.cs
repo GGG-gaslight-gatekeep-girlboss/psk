@@ -1,5 +1,6 @@
 using CoffeeShop.BusinessLogic.Common.Entities;
 using CoffeeShop.BusinessLogic.OrderManagement.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CoffeeShop.BusinessLogic.OrderManagement.Entities;
 
@@ -9,7 +10,7 @@ public class Order : BaseEntity
     public required Status OrderStatus { get; set; }
     public required List<OrderItem> Items { get; set; }
     public bool IsDeleted { get; set; } = false;
-    public decimal TotalPrice(){
-        return Items.Sum(item => (item.Product?.Price ?? 0) * item.Quantity);
-    }
+
+    [NotMapped]
+    public decimal TotalPrice => Items.Sum(item => item.ProductPrice * item.Quantity);
 }
