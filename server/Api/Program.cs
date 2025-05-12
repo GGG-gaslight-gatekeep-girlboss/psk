@@ -14,6 +14,7 @@ builder.Configuration.AddEnvironmentVariables().AddDotNetEnv(".env");
 
 builder
     .Services.AddSharedServices(builder.Environment, builder.Configuration)
+    .AddOrderManagement()
     .AddProductManagement()
     .AddUserManagement(builder.Configuration);
 
