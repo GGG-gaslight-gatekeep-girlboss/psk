@@ -35,4 +35,8 @@ export const paths = {
     path: "/products/:productId/edit",
     getHref: (productId: string) => `/products/${productId}/edit`,
   },
+  orders: {
+    path: "/orders",
+    getHref: () => "/orders",
+  },
 } as const;

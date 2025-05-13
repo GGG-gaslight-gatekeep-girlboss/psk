@@ -18,6 +18,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<OrderDTO>> CreateOrder([FromBody] CreateOrderDTO request)
     {
         return Ok(await _orderService.CreateOrder(request));
@@ -42,6 +43,7 @@ public class OrderController : ControllerBase
 
     [HttpGet]
     [Route("{id:Guid}")]
+    [Authorize]
     public async Task<ActionResult<OrderDTO>> GetOrder(Guid id)
     {
         return Ok(await _orderService.GetOrder(id));

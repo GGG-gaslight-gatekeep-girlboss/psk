@@ -68,6 +68,7 @@ export function CoreLayout() {
           )}
 
           <NavLink label="Product management" component={Link} to={paths.products.getHref()} />
+          <NavLink label="Order management" component={Link} to={paths.orders.getHref()} />
         </AppShell.Navbar>
       )}
 

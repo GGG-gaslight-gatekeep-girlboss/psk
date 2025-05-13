@@ -10,6 +10,7 @@ import { EditProductRoute } from "./routes/edit-product";
 import { EmployeesRoute } from "./routes/employees";
 import { HomeRoute } from "./routes/home";
 import LoginRoute from "./routes/login";
+import { OrdersRoute } from "./routes/orders";
 import { ProductsRoute } from "./routes/products";
 import { ProtectedRoute } from "./routes/protected-route";
 import RegisterRoute from "./routes/register";
@@ -74,6 +75,7 @@ function App() {
             <Route path={paths.products.path} element={<ProductsRoute />} />
             <Route path={paths.addProduct.path} element={<AddProductRoute />} />
             <Route path={paths.editProduct.path} element={<EditProductRoute />} />
+            <Route path={paths.orders.path} element={<OrdersRoute />} />
           </Route>
         </Route>
       </Routes>

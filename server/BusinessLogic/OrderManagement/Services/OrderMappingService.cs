@@ -2,6 +2,7 @@ using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
 using CoffeeShop.BusinessLogic.OrderManagement.Entities;
 using CoffeeShop.BusinessLogic.OrderManagement.Enums;
+using CoffeeShop.BusinessLogic.UserManagement.Entities;
 
 namespace CoffeeShop.BusinessLogic.OrderManagement.Services;
 
@@ -24,7 +25,7 @@ public class OrderMappingService : IOrderMappingService{
         List<OrderItemDTO> mappedItems = MapOrderItemToOrderItemDTO(order.Items);
         return new OrderDTO(
             order.Id,
-            order.CreatedById!,
+            MapUserToOrderCustomerDTO(order.CreatedBy),
             order.OrderStatus.ToString(),
             mappedItems,
             order.TotalPrice,
@@ -57,5 +58,15 @@ public class OrderMappingService : IOrderMappingService{
         }
 
         return mappedItems;
+    }
+
+    private OrderCustomerDTO MapUserToOrderCustomerDTO(User user)
+    {
+        return new OrderCustomerDTO(
+            user.Id,
+            user.FirstName,
+            user.LastName,
+            user.PhoneNumber!
+        );
     }
 }
