@@ -22,6 +22,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository{
         return await DbSet
             .Where(order => !order.IsDeleted)
             .Include(order => order.Items)
+            .Include(order => order.CreatedBy)
             .ToListAsync();
     }
 
@@ -30,6 +31,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository{
         var entity = await DbSet
             .Where(x => x.Id == id && !x.IsDeleted)
             .Include(x => x.Items)
+            .Include(order => order.CreatedBy)
             .FirstOrDefaultAsync();
 
         return entity ?? throw new EntityNotFoundException(GetEntityNotFoundErrorMessage(id));

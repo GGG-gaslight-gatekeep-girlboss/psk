@@ -32,7 +32,7 @@ public class OrderService : IOrderService {
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<OrderDTO> CreateOrder(CreateOrderDTO dto)
+    public async Task<Guid> CreateOrder(CreateOrderDTO dto)
     {
         ValidatePickupTime(dto.PickupTime);
         await ValidateOrderItems(dto.Items);
@@ -45,7 +45,7 @@ public class OrderService : IOrderService {
 
         await _unitOfWork.SaveChanges();
 
-        return _orderMappingService.MapOrderToOrderDTO(order);
+        return order.Id;
     }
 
     public async Task<List<OrderDTO>> GetAllOrders()

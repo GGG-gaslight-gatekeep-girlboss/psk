@@ -9,7 +9,8 @@ export const ProductList = () => {
   const productsQuery = useProducts({});
   const navigate = useNavigate();
 
-  const navigateToProduct = (product: Product) => navigate(paths.editProduct.getHref(product.id));
+  const navigateToProduct = (product: Product) =>
+    navigate(paths.admin.editProduct.getHref(product.id));
 
   if (productsQuery.isLoading) {
     return <Text>Loading...</Text>;

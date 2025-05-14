@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using CoffeeShop.BusinessLogic.Common.Entities;
 using CoffeeShop.BusinessLogic.ProductManagement.Entities;
 
@@ -14,4 +15,7 @@ public class OrderItem : BaseEntity
     public required string ProductName { get; set; }
     public required decimal ProductPrice { get; set; }
     public required int Quantity { get; set; }
+    
+    [NotMapped]
+    public decimal TotalPrice => Quantity * ProductPrice;
 }

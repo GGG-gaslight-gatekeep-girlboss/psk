@@ -7,7 +7,8 @@ export const EmployeeList = () => {
   const employeesQuery = useEmployees({});
   const navigate = useNavigate();
 
-  const navigateToEmployee = (employeeId: string) => navigate(paths.editEmployee.getHref(employeeId));
+  const navigateToEmployee = (employeeId: string) =>
+    navigate(paths.admin.editEmployee.getHref(employeeId));
 
   if (employeesQuery.isLoading) {
     return <div>Loading...</div>;
