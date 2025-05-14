@@ -1,9 +1,15 @@
 import { Table, Text } from "@mantine/core";
-import { formatOrderStatus, formatPrice } from "../../../shared/utils/format";
+import {
+  formatDate,
+  formatOrderStatus,
+  formatPrice,
+} from "../../../shared/utils/format";
 import { useOrders } from "../api/get-orders";
+import { useNavigate } from "react-router-dom";
 
 export const OrderList = () => {
   const ordersQuery = useOrders({});
+  const navigate = useNavigate();
 
   if (ordersQuery.isLoading) {
     return <Text>Loading...</Text>;
@@ -15,10 +21,10 @@ export const OrderList = () => {
   }
 
   const rows = orders.map((o) => (
-    <Table.Tr key={o.id}>
+    <Table.Tr key={o.id} onClick={() => navigate(o.id)}>
       <Table.Td>{o.id}</Table.Td>
       <Table.Td>{`${o.customer.firstName} ${o.customer.lastName}`}</Table.Td>
-      <Table.Td>{new Date(o.pickupTime).toLocaleString()}</Table.Td>
+      <Table.Td>{formatDate(o.pickupTime)}</Table.Td>
       <Table.Td>{formatOrderStatus(o.status)}</Table.Td>
       <Table.Td>{formatPrice(o.totalPrice)}</Table.Td>
     </Table.Tr>

@@ -1,4 +1,13 @@
-import { Button, Group, Modal, Paper, Stack, Text, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Modal,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { zodResolver } from "mantine-form-zod-resolver";
@@ -7,12 +16,21 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "../../../shared/config/paths";
 import { showSuccessNotification } from "../../../shared/utils/notifications";
 import { useDeleteEmployee } from "../api/delete-employee";
-import { EditEmployeeInput, editEmployeeInputSchema, useEditEmployee } from "../api/edit-employee";
+import {
+  EditEmployeeInput,
+  editEmployeeInputSchema,
+  useEditEmployee,
+} from "../api/edit-employee";
 import { useEmployee } from "../api/get-employee";
 
 export const EditEmployee = (props: { employeeId: string }) => {
-  const employeeQuery = useEmployee({ params: { employeeId: props.employeeId } });
-  const [isDeleteModalOpen, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
+  const employeeQuery = useEmployee({
+    params: { employeeId: props.employeeId },
+  });
+  const [
+    isDeleteModalOpen,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
   const navigate = useNavigate();
 
   const editEmployeeForm = useForm<EditEmployeeInput>({
@@ -38,7 +56,7 @@ export const EditEmployee = (props: { employeeId: string }) => {
     mutationConfig: {
       onSuccess: () => {
         showSuccessNotification({ message: "Employee deleted successfully" });
-        navigate(paths.employees.getHref());
+        navigate(paths.admin.employees.getHref());
       },
     },
   });
@@ -67,7 +85,12 @@ export const EditEmployee = (props: { employeeId: string }) => {
 
   return (
     <>
-      <Modal opened={isDeleteModalOpen} onClose={closeDeleteModal} centered title="Delete employee">
+      <Modal
+        opened={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        centered
+        title="Delete employee"
+      >
         <Text>Are you sure you want to delete the employee?</Text>
 
         <Group mt="lg" justify="end">
@@ -124,7 +147,10 @@ export const EditEmployee = (props: { employeeId: string }) => {
             </Button>
 
             <Group gap="xs">
-              <Button variant="default" onClick={() => navigate(paths.employees.getHref())}>
+              <Button
+                variant="default"
+                onClick={() => navigate(paths.admin.employees.getHref())}
+              >
                 Cancel
               </Button>
               <Button color="teal" type="submit">

@@ -1,9 +1,20 @@
-import { Button, Paper, PasswordInput, Stack, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Paper,
+  PasswordInput,
+  Stack,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 import { paths } from "../../../shared/config/paths";
 import { showSuccessNotification } from "../../../shared/utils/notifications";
-import { AddEmployeeInput, addEmployeeInputSchema, useAddEmployee } from "../api/add-employee";
+import {
+  AddEmployeeInput,
+  addEmployeeInputSchema,
+  useAddEmployee,
+} from "../api/add-employee";
 
 export const AddEmployee = () => {
   const navigate = useNavigate();
@@ -24,7 +35,7 @@ export const AddEmployee = () => {
     mutationConfig: {
       onSuccess: () => {
         showSuccessNotification({ message: "Employee added successfully" });
-        navigate(paths.employees.getHref());
+        navigate(paths.admin.employees.getHref());
       },
     },
   });
@@ -79,7 +90,12 @@ export const AddEmployee = () => {
           />
         </Stack>
 
-        <Button fullWidth mt="xl" type="submit" loading={addEmployeeMutation.isPending}>
+        <Button
+          fullWidth
+          mt="xl"
+          type="submit"
+          loading={addEmployeeMutation.isPending}
+        >
           Add employee
         </Button>
       </form>

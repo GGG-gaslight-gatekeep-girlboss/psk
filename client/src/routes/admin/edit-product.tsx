@@ -1,10 +1,10 @@
 import { Container } from "@mantine/core";
 import { Navigate, useParams } from "react-router-dom";
-import { EditProduct } from "../features/products/components/edit-product";
-import { paths } from "../shared/config/paths";
-import { usePageTitle } from "../shared/hooks/use-page-title";
+import { usePageTitle } from "../../shared/hooks/use-page-title";
+import { paths } from "../../shared/config/paths";
+import { EditProduct } from "../../features/products/components/edit-product";
 
-export const EditProductRoute = () => {
+export const EditProductAdminRoute = () => {
   usePageTitle({ title: "Edit product" });
   const { productId } = useParams();
 

@@ -1,4 +1,12 @@
-import { Anchor, AppShell, Avatar, Button, Group, Menu, NavLink } from "@mantine/core";
+import {
+  Anchor,
+  AppShell,
+  Avatar,
+  Button,
+  Group,
+  Menu,
+  NavLink,
+} from "@mantine/core";
 import { Link, Outlet } from "react-router-dom";
 import { useLogout } from "../../features/users/api/logout";
 import { useUserStore } from "../../features/users/user-store";
@@ -9,7 +17,8 @@ import { showSuccessNotification } from "../utils/notifications";
 export function CoreLayout() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-  const showNavbar = user?.role === "Employee" || user?.role === "BusinessOwner";
+  const showNavbar =
+    user?.role === "Employee" || user?.role === "BusinessOwner";
 
   const logoutMutation = useLogout({
     mutationConfig: {
@@ -43,7 +52,11 @@ export function CoreLayout() {
           {user ? (
             <Menu withArrow width={200} shadow="md">
               <Menu.Target>
-                <Avatar radius="xl" color="initials" name={`${user.firstName} ${user.lastName}`} />
+                <Avatar
+                  radius="xl"
+                  color="initials"
+                  name={`${user.firstName} ${user.lastName}`}
+                />
               </Menu.Target>
 
               <Menu.Dropdown>
@@ -64,11 +77,23 @@ export function CoreLayout() {
       {user && showNavbar && (
         <AppShell.Navbar>
           {user.role === "BusinessOwner" && (
-            <NavLink label="Employee management" component={Link} to={paths.employees.getHref()} />
+            <NavLink
+              label="Employee management"
+              component={Link}
+              to={paths.admin.employees.getHref()}
+            />
           )}
 
-          <NavLink label="Product management" component={Link} to={paths.products.getHref()} />
-          <NavLink label="Order management" component={Link} to={paths.orders.getHref()} />
+          <NavLink
+            label="Product management"
+            component={Link}
+            to={paths.admin.products.getHref()}
+          />
+          <NavLink
+            label="Order management"
+            component={Link}
+            to={paths.admin.orders.getHref()}
+          />
         </AppShell.Navbar>
       )}
 

@@ -4,5 +4,6 @@ public sealed record OrderItemDTO(
     Guid ProductId,
     string ProductName,
     decimal ProductPrice,
-    int Quantity
+    int Quantity,
+    decimal TotalPrice
 );

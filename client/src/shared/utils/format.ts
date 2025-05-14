@@ -18,3 +18,5 @@ export const formatOrderStatus = (status: OrderStatus) => {
       return status;
   }
 };
+
+export const formatDate = (date: string) => new Date(date).toLocaleString();

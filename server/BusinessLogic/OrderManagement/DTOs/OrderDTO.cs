@@ -6,5 +6,6 @@ public sealed record OrderDTO(
     string Status,
     List<OrderItemDTO> Items,
     decimal TotalPrice,
-    DateTimeOffset PickupTime
+    DateTimeOffset PickupTime,
+    DateTimeOffset CreatedAt
 );

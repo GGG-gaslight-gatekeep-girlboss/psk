@@ -1,8 +1,8 @@
 import { Container, Group, Title } from "@mantine/core";
-import { OrderList } from "../features/orders/components/order-list";
-import { usePageTitle } from "../shared/hooks/use-page-title";
+import { OrderList } from "../../features/orders/components/order-list";
+import { usePageTitle } from "../../shared/hooks/use-page-title";
 
-export const OrdersRoute = () => {
+export const OrdersAdminRoute = () => {
   usePageTitle({ title: "Orders" });
 
   return (

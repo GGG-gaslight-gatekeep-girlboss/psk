@@ -29,7 +29,8 @@ public class OrderMappingService : IOrderMappingService{
             order.OrderStatus.ToString(),
             mappedItems,
             order.TotalPrice,
-            order.PickupTime
+            order.PickupTime,
+            order.CreatedAt
         );
     }
 
@@ -44,7 +45,8 @@ public class OrderMappingService : IOrderMappingService{
                     Guid.Empty,
                     "Deleted Product",
                     item.ProductPrice,
-                    item.Quantity
+                    item.Quantity,
+                    item.TotalPrice
                 ));
                 continue;
             }
@@ -53,7 +55,8 @@ public class OrderMappingService : IOrderMappingService{
                 item.ProductId.Value,
                 item.ProductName,
                 item.ProductPrice,
-                item.Quantity
+                item.Quantity,
+                item.TotalPrice
             ));
         }
 

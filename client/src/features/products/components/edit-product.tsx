@@ -18,13 +18,20 @@ import { useNavigate } from "react-router-dom";
 import { paths } from "../../../shared/config/paths";
 import { showSuccessNotification } from "../../../shared/utils/notifications";
 import { useDeleteProduct } from "../api/delete-product";
-import { EditProductInput, editProductInputSchema, useEditProduct } from "../api/edit-product";
+import {
+  EditProductInput,
+  editProductInputSchema,
+  useEditProduct,
+} from "../api/edit-product";
 import { useProduct } from "../api/get-product";
 import { useSetProductImage } from "../api/set-product-image";
 
 export const EditProduct = (props: { productId: string }) => {
   const [image, setImage] = useState<File | null>(null);
-  const [isDeleteModalOpen, { open: openDeleteModal, close: closeDeleteModal }] = useDisclosure(false);
+  const [
+    isDeleteModalOpen,
+    { open: openDeleteModal, close: closeDeleteModal },
+  ] = useDisclosure(false);
   const productQuery = useProduct({ params: { productId: props.productId } });
   const navigate = useNavigate();
 
@@ -54,7 +61,10 @@ export const EditProduct = (props: { productId: string }) => {
         showSuccessNotification({ message: "Product updated successfully" });
 
         if (image) {
-          setProductImageMutation.mutate({ product: productQuery.data!, image });
+          setProductImageMutation.mutate({
+            product: productQuery.data!,
+            image,
+          });
         }
       },
     },
@@ -64,7 +74,7 @@ export const EditProduct = (props: { productId: string }) => {
     mutationConfig: {
       onSuccess: () => {
         showSuccessNotification({ message: "Product deleted successfully" });
-        navigate(paths.products.getHref());
+        navigate(paths.admin.products.getHref());
       },
     },
   });
@@ -93,7 +103,12 @@ export const EditProduct = (props: { productId: string }) => {
 
   return (
     <>
-      <Modal opened={isDeleteModalOpen} onClose={closeDeleteModal} centered title="Delete product">
+      <Modal
+        opened={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        centered
+        title="Delete product"
+      >
         <Text>Are you sure you want to delete the product?</Text>
 
         <Group mt="lg" justify="end">
@@ -161,7 +176,10 @@ export const EditProduct = (props: { productId: string }) => {
             </Button>
 
             <Group gap="xs">
-              <Button variant="default" onClick={() => navigate(paths.products.getHref())}>
+              <Button
+                variant="default"
+                onClick={() => navigate(paths.admin.products.getHref())}
+              >
                 Cancel
               </Button>
               <Button color="teal" type="submit">

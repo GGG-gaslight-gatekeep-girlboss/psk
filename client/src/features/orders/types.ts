@@ -1,11 +1,18 @@
-export type OrderStatus = "Pending" | "InProgress" | "Ready" | "Completed";
+export enum OrderStatus {
+  Pending = "Pending",
+  InProgress = "InProgress",
+  Ready = "Ready",
+  Completed = "Completed",
+}
 
 export type Order = {
   id: string;
   customer: OrderCustomer;
   totalPrice: number;
   pickupTime: string;
+  createdAt: string;
   status: OrderStatus;
+  items: OrderItem[];
 };
 
 export type OrderItem = {
@@ -13,6 +20,7 @@ export type OrderItem = {
   productName: string;
   productPrice: number;
   quantity: number;
+  totalPrice: number;
 };
 
 export type OrderCustomer = {

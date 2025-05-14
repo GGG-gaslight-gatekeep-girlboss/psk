@@ -19,7 +19,7 @@ public class OrderController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<OrderDTO>> CreateOrder([FromBody] CreateOrderDTO request)
+    public async Task<ActionResult<Guid>> CreateOrder([FromBody] CreateOrderDTO request)
     {
         return Ok(await _orderService.CreateOrder(request));
     }

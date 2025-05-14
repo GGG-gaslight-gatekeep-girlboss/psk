@@ -11,32 +11,38 @@ export const paths = {
     path: "/register",
     getHref: () => "/register",
   },
-  employees: {
-    path: "/employees",
-    getHref: () => "/employees",
-  },
-  addEmployee: {
-    path: "/employees/add",
-    getHref: () => "/employees/add",
-  },
-  editEmployee: {
-    path: "/employees/:employeeId/edit",
-    getHref: (employeeId: string) => `/employees/${employeeId}/edit`,
-  },
-  products: {
-    path: "/products",
-    getHref: () => "/products",
-  },
-  addProduct: {
-    path: "/products/add",
-    getHref: () => "/products/add",
-  },
-  editProduct: {
-    path: "/products/:productId/edit",
-    getHref: (productId: string) => `/products/${productId}/edit`,
-  },
-  orders: {
-    path: "/orders",
-    getHref: () => "/orders",
+  admin: {
+    employees: {
+      path: "/admin/employees",
+      getHref: () => "/admin/employees",
+    },
+    addEmployee: {
+      path: "/admin/employees/add",
+      getHref: () => "/admin/employees/add",
+    },
+    editEmployee: {
+      path: "/admin/employees/:employeeId/edit",
+      getHref: (employeeId: string) => `/admin/employees/${employeeId}/edit`,
+    },
+    products: {
+      path: "/admin/products",
+      getHref: () => "/admin/products",
+    },
+    addProduct: {
+      path: "/admin/products/add",
+      getHref: () => "/admin/products/add",
+    },
+    editProduct: {
+      path: "/admin/products/:productId/edit",
+      getHref: (productId: string) => `/admin/products/${productId}/edit`,
+    },
+    orders: {
+      path: "/admin/orders",
+      getHref: () => "/admin/orders",
+    },
+    order: {
+      path: "/admin/orders/:orderId",
+      getHref: (orderId: string) => `/admin/orders/${orderId}`,
+    },
   },
 } as const;

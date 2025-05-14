@@ -12,5 +12,5 @@ public class Order : BaseEntity
     public bool IsDeleted { get; set; } = false;
 
     [NotMapped]
-    public decimal TotalPrice => Items.Sum(item => item.ProductPrice * item.Quantity);
+    public decimal TotalPrice => Items.Sum(i => i.TotalPrice);
 }
