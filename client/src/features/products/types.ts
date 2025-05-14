@@ -5,4 +5,5 @@ export type Product = {
   price: number;
   stock: number;
   imageUrl?: string;
+  version: number;
 };

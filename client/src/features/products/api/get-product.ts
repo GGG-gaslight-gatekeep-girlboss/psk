@@ -13,7 +13,7 @@ export const getProduct = (params: GetProductParams): Promise<Product> => {
 
 export const getProductQueryOptions = (params: GetProductParams) => {
   return queryOptions({
-    queryKey: ["products", params.productId],
+    queryKey: ["product", params.productId],
     queryFn: () => getProduct(params),
   });
 };

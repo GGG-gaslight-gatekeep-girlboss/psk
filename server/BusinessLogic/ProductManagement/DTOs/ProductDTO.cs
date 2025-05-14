@@ -6,5 +6,6 @@ public sealed record ProductDTO(
     string Description,
     decimal Price,
     int Stock,
-    string? ImageUrl
+    string? ImageUrl,
+    uint Version
 );

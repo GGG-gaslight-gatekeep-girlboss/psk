@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { api } from "../../../shared/config/api-client";
 import { MutationConfig } from "../../../shared/config/react-query";
@@ -9,6 +9,8 @@ export const editProductInputSchema = z.object({
   description: z.string().optional(),
   price: z.number().nonnegative("Price must not be negative.").optional(),
   stock: z.number().nonnegative("Stock must not be negative.").optional(),
+  version: z.number(),
+  forceUpdate: z.boolean(),
 });
 
 export type EditProductInput = z.infer<typeof editProductInputSchema>;
@@ -22,8 +24,18 @@ type UseEditProductOptions = {
 };
 
 export const useEditProduct = ({ mutationConfig }: UseEditProductOptions) => {
+  const queryClient = useQueryClient();
+
+  const { onSuccess, ...restConfig } = mutationConfig || {};
+
   return useMutation({
-    ...mutationConfig,
+    onSuccess: (...args) => {
+      queryClient.invalidateQueries({
+        queryKey: ["product", args[1].productId],
+      });
+      onSuccess?.(...args);
+    },
+    ...restConfig,
     mutationFn: editProduct,
   });
 };

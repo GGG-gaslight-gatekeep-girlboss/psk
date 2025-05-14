@@ -23,7 +23,8 @@ public class ProductMappingService : IProductMappingService
             product.Description,
             product.Price,
             product.Stock,
-            GetProductImageUrl(product)
+            GetProductImageUrl(product),
+            product.Version
         );
     }
 
