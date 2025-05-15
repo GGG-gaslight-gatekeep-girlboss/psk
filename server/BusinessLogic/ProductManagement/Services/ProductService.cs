@@ -55,6 +55,10 @@ public class ProductService : IProductService
     public async Task<ProductDTO> UpdateProduct(Guid id, UpdateProductDTO dto)
     {
         var product = await _productRepository.Get(id);
+        if (product.Version != dto.Version && !dto.ForceUpdate)
+        {
+            throw new EntityHasBeenModifiedException("Product has been modified in another session.");
+        }
 
         if (product is null)
         {

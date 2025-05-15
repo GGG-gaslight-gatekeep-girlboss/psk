@@ -4,6 +4,7 @@ namespace CoffeeShop.BusinessLogic.ProductManagement.Entities;
 
 public class Product : BaseEntity
 {
+    public uint Version { get; set; }
     public required string Name { get; set; }
     public required string Description { get; set; }
     public required decimal Price { get; set; }

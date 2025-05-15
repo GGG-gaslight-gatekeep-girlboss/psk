@@ -13,6 +13,10 @@ public class ProductConfiguration : BaseEntityConfiguration<Product>
     {
         base.Configure(builder);
 
+        builder.Property(p => p.Version)
+            .IsRowVersion()
+            .HasColumnName("xmin");
+
         builder.Property(p => p.Name)
             .IsRequired()
             .HasMaxLength(100);

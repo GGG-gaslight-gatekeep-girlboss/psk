@@ -58,6 +58,7 @@ public abstract class ExceptionHandlingMiddleware
         InvalidDomainValueException => HttpStatusCode.BadRequest,
         UserNotAuthenticatedException => HttpStatusCode.Unauthorized,
         UserNotAuthorizedException => HttpStatusCode.Forbidden,
+        EntityHasBeenModifiedException => HttpStatusCode.Conflict,
         _ => HttpStatusCode.InternalServerError
     };
 }

@@ -6,8 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
+import { queryConfig } from "./shared/config/react-query.ts";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ defaultOptions: queryConfig });
 
 const theme = createTheme({
   primaryShade: 7,

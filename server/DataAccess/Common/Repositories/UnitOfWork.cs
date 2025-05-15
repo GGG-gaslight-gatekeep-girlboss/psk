@@ -1,4 +1,6 @@
+using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop.DataAccess.Common.Repositories;
 
@@ -46,6 +48,13 @@ public class UnitOfWork : IUnitOfWork
 
     public async Task SaveChanges()
     {
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new EntityHasBeenModifiedException("Entity has been modified in another session.");
+        }
     }
 }
