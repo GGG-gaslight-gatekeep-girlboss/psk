@@ -16,7 +16,7 @@ public class OrderConfiguration : BaseEntityConfiguration<Order>{
         builder.Property(p => p.PickupTime)
             .IsRequired();
 
-        builder.Property(o => o.OrderStatus)
+        builder.Property(o => o.Status)
                .HasConversion<string>()
                .IsRequired();
 

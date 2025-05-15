@@ -38,7 +38,7 @@ public class OrderService : IOrderService {
         await ValidateOrderItems(dto.Items);
 
         List<OrderItem> items = await MapCreateOrderItemDTOToOrderItem(dto.Items);
-        var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, items, Status.Pending);
+        var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, items, OrderStatus.Pending);
 
         await UpdateProductStock(order.Items);
         _orderRepository.Add(order);
@@ -90,8 +90,8 @@ public class OrderService : IOrderService {
         var order = await _orderRepository.GetWithItems(id);
 
         try {
-            Status enumStatus = Enum.Parse<Status>(request.OrderStatus.Trim(), ignoreCase: true);
-            order.OrderStatus = enumStatus;
+            OrderStatus enumStatus = Enum.Parse<OrderStatus>(request.OrderStatus.Trim(), ignoreCase: true);
+            order.Status = enumStatus;
         } catch(ArgumentException) {
             throw new InvalidDomainValueException($"{request.OrderStatus} is not a valid order status.");
         }
