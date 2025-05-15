@@ -5,7 +5,6 @@ namespace CoffeeShop.BusinessLogic.PaymentManagement.Interfaces;
 
 public interface IStripeService
 {
-    Task<PaymentIntentDTO> CreatePaymentIntent(CreatePaymentIntentDTO paymentIntentDTO);
+    Task<PaymentIntentDTO> CreatePaymentIntent(decimal paymentAmount);
     Task<PaymentStatus> GetPaymentIntentStatus(string paymentId);
-    Task CancelPaymentIntent(string paymentId);
 }

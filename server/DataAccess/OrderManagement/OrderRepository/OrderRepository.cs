@@ -2,6 +2,7 @@ using CoffeeShop.DataAccess.Common.Repositories;
 using CoffeeShop.BusinessLogic.OrderManagement.Entities;
 using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 using CoffeeShop.BusinessLogic.Common.Exceptions;
+using CoffeeShop.BusinessLogic.PaymentManagement.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop.DataAccess.OrderManagement.Repositories;
@@ -14,6 +15,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository{
         return await DbSet
             .Where(order => order.CreatedById == userId && !order.IsDeleted)
             .Include(order => order.Items)
+            .Where(o => o.Payment.Status == PaymentStatus.Succeeded)
             .ToListAsync();
     }
 
@@ -23,6 +25,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository{
             .Where(order => !order.IsDeleted)
             .Include(order => order.Items)
             .Include(order => order.CreatedBy)
+            .Where(o => o.Payment.Status == PaymentStatus.Succeeded)
             .ToListAsync();
     }
 

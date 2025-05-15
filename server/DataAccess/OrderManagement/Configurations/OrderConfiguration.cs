@@ -16,9 +16,14 @@ public class OrderConfiguration : BaseEntityConfiguration<Order>{
         builder.Property(p => p.PickupTime)
             .IsRequired();
 
-        builder.Property(o => o.Status)
+        builder.Property(o => o.OrderStatus)
                .HasConversion<string>()
                .IsRequired();
+
+        builder.HasOne(o => o.Payment)
+            .WithOne()
+            .HasForeignKey<Order>(o => o.PaymentId)
+            .IsRequired();
 
         builder.HasMany(o => o.Items)
             .WithOne()

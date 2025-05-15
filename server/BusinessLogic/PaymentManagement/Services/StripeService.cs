@@ -15,14 +15,13 @@ public class StripeService : IStripeService
         _paymentIntentService = paymentIntentService;
     }
 
-    public async Task<PaymentIntentDTO> CreatePaymentIntent(CreatePaymentIntentDTO paymentIntentDTO)
+    public async Task<PaymentIntentDTO> CreatePaymentIntent(decimal paymentAmount)
     {
         var paymentIntentOptions = new PaymentIntentCreateOptions
         {
-            Amount = (long)(paymentIntentDTO.PaymentAmount * 100m),
+            Amount = (long)(paymentAmount * 100m),
             Currency = "eur",
             PaymentMethodTypes = ["card"],
-            Description = $"Payment for order #{paymentIntentDTO.OrderId} ({paymentIntentDTO.PaymentAmount}€ tip)",
         };
 
         try
@@ -33,6 +32,7 @@ public class StripeService : IStripeService
             {
                 PaymentIntentId = paymentIntent.Id,
                 ClientSecret = paymentIntent.ClientSecret,
+                PaymentId = Guid.Empty
             };
         }
         catch (StripeException ex)
@@ -51,7 +51,4 @@ public class StripeService : IStripeService
             _ => PaymentStatus.Pending,
         };
     }
-
-    public Task CancelPaymentIntent(string paymentId) =>
-        _paymentIntentService.CancelAsync(paymentId);
 }

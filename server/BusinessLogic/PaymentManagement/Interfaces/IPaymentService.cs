@@ -4,6 +4,6 @@ namespace CoffeeShop.BusinessLogic.PaymentManagement.Interfaces;
 
 public interface IPaymentService
 {
-    Task<PaymentIntentDTO> CreateCardPaymentIntent(Guid orderId);
+    Task<PaymentIntentDTO> CreateCardPayment(Guid orderId, decimal paymentAmount);
     Task ConfirmCardPayment(string paymentIntentId);
 }
