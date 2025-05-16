@@ -9,6 +9,8 @@ using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.Common.Services;
 using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 using CoffeeShop.BusinessLogic.OrderManagement.Services;
+using CoffeeShop.BusinessLogic.PaymentManagement.Interfaces;
+using CoffeeShop.BusinessLogic.PaymentManagement.Services;
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
 using CoffeeShop.BusinessLogic.ProductManagement.Services;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
@@ -17,11 +19,15 @@ using CoffeeShop.BusinessLogic.UserManagement.Services;
 using CoffeeShop.DataAccess;
 using CoffeeShop.DataAccess.Common.Repositories;
 using CoffeeShop.DataAccess.OrderManagement.Repositories;
+using CoffeeShop.DataAccess.PaymentManagement.Repositories;
 using CoffeeShop.DataAccess.ProductManagement.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
+using ProductService = CoffeeShop.BusinessLogic.ProductManagement.Services.ProductService;
+using TokenService = CoffeeShop.BusinessLogic.UserManagement.Services.TokenService;
 
 namespace CoffeeShop.Api.Extensions;
 
@@ -174,6 +180,18 @@ public static class ConfigureServicesExtensions
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IOrderMappingService, OrderMappingService>();
         services.AddScoped<IOrderService, OrderService>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddPaymentManagement(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<ICardPaymentRepository, CardPaymentRepository>();
+        services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IStripeService, StripeService>();
+        services.AddScoped<PaymentIntentService>();
+
+        StripeConfiguration.ApiKey = configuration["Stripe:ApiKey"];
 
         return services;
     }

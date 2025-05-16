@@ -3,6 +3,7 @@ using System;
 using CoffeeShop.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CoffeeShop.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250515163313_AddPayments")]
+    partial class AddPayments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,9 +51,6 @@ namespace CoffeeShop.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("PaymentId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTimeOffset>("PickupTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -59,9 +59,6 @@ namespace CoffeeShop.DataAccess.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ModifiedById");
-
-                    b.HasIndex("PaymentId")
-                        .IsUnique();
 
                     b.ToTable("Order", (string)null);
                 });
@@ -456,17 +453,9 @@ namespace CoffeeShop.DataAccess.Migrations
                         .HasForeignKey("ModifiedById")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("CoffeeShop.BusinessLogic.PaymentManagement.Entities.CardPayment", "Payment")
-                        .WithOne()
-                        .HasForeignKey("CoffeeShop.BusinessLogic.OrderManagement.Entities.Order", "PaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ModifiedBy");
-
-                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("CoffeeShop.BusinessLogic.OrderManagement.Entities.OrderItem", b =>

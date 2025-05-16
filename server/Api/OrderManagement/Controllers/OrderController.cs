@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
+using CoffeeShop.BusinessLogic.PaymentManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 
 namespace CoffeeShop.Api.OrderManagement.Controllers;
@@ -19,7 +20,7 @@ public class OrderController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<Guid>> CreateOrder([FromBody] CreateOrderDTO request)
+    public async Task<ActionResult<PaymentIntentDTO>> CreateOrder([FromBody] CreateOrderDTO request)
     {
         return Ok(await _orderService.CreateOrder(request));
     }

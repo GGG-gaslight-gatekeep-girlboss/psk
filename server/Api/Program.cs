@@ -16,7 +16,8 @@ builder
     .Services.AddSharedServices(builder.Environment, builder.Configuration)
     .AddOrderManagement()
     .AddProductManagement()
-    .AddUserManagement(builder.Configuration);
+    .AddUserManagement(builder.Configuration)
+    .AddPaymentManagement(builder.Configuration);
 
 builder.Host.UseSerilog(
     (context, loggerConfig) =>

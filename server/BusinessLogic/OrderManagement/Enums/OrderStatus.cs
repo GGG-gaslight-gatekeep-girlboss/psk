@@ -1,6 +1,6 @@
 namespace CoffeeShop.BusinessLogic.OrderManagement.Enums;
 
-public enum Status
+public enum OrderStatus
 {
     Pending = 0,
     InProgress,

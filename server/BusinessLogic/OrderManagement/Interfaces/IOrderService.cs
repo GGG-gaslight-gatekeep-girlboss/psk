@@ -1,9 +1,10 @@
 using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
+using CoffeeShop.BusinessLogic.PaymentManagement.DTOs;
 
 namespace CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 
 public interface IOrderService{
-    Task<Guid> CreateOrder(CreateOrderDTO dto);
+    Task<PaymentIntentDTO> CreateOrder(CreateOrderDTO dto);
     Task<List<OrderDTO>> GetAllOrders();
     Task<List<OrderDTO>> GetCurrentUserOrders();
     Task<OrderDTO> GetOrder(Guid id);

@@ -10,7 +10,7 @@ public class OrderMappingService : IOrderMappingService{
     public Order MapCreateOrderDTOToOrder(
         CreateOrderDTO dto, 
         List<OrderItem> mappedItems, 
-        Status orderStatus)
+        OrderStatus orderStatus)
     {
         return new Order
         {
@@ -26,7 +26,7 @@ public class OrderMappingService : IOrderMappingService{
         return new OrderDTO(
             order.Id,
             MapUserToOrderCustomerDTO(order.CreatedBy),
-            order.OrderStatus.ToString(),
+            order.OrderStatus,
             mappedItems,
             order.TotalPrice,
             order.PickupTime,

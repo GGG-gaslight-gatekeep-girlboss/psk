@@ -20,6 +20,11 @@ public class OrderConfiguration : BaseEntityConfiguration<Order>{
                .HasConversion<string>()
                .IsRequired();
 
+        builder.HasOne(o => o.Payment)
+            .WithOne()
+            .HasForeignKey<Order>(o => o.PaymentId)
+            .IsRequired();
+
         builder.HasMany(o => o.Items)
             .WithOne()
             .HasForeignKey("OrderId");

@@ -1,4 +1,5 @@
 using System.Reflection;
+using CoffeeShop.BusinessLogic.PaymentManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.ProductManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
@@ -12,6 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<CardPayment> CardPayments { get; set; }
 
     private readonly ICurrentUserAccessor _currentUserAccessor;
 

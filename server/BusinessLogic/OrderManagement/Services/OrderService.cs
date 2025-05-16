@@ -4,6 +4,8 @@ using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
 using CoffeeShop.BusinessLogic.OrderManagement.DTOs;
 using CoffeeShop.BusinessLogic.OrderManagement.Enums;
 using CoffeeShop.BusinessLogic.OrderManagement.Entities;
+using CoffeeShop.BusinessLogic.PaymentManagement.DTOs;
+using CoffeeShop.BusinessLogic.PaymentManagement.Interfaces;
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
@@ -17,36 +19,42 @@ public class OrderService : IOrderService {
     private readonly IProductRepository _productRepository;
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPaymentService _paymentService;
 
     public OrderService(
         IOrderRepository orderRepository,
         IOrderMappingService orderMappingService,
         IProductRepository productRepository,
         ICurrentUserAccessor currentUserAccessor,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IPaymentService paymentService)
     {
         _orderRepository = orderRepository;
         _orderMappingService = orderMappingService;
         _productRepository = productRepository;
         _currentUserAccessor = currentUserAccessor;
         _unitOfWork = unitOfWork;
+        _paymentService = paymentService;
     }
 
-    public async Task<Guid> CreateOrder(CreateOrderDTO dto)
-    {
-        ValidatePickupTime(dto.PickupTime);
-        await ValidateOrderItems(dto.Items);
+    public Task<PaymentIntentDTO> CreateOrder(CreateOrderDTO dto) =>
+        _unitOfWork.ExecuteInTransaction(async () =>
+        {
+            ValidatePickupTime(dto.PickupTime);
+            await ValidateOrderItems(dto.Items);
 
-        List<OrderItem> items = await MapCreateOrderItemDTOToOrderItem(dto.Items);
-        var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, items, Status.Pending);
+            List<OrderItem> items = await MapCreateOrderItemDTOToOrderItem(dto.Items);
+            var order = _orderMappingService.MapCreateOrderDTOToOrder(dto, items, OrderStatus.Pending);
+            await UpdateProductStock(order.Items);
 
-        await UpdateProductStock(order.Items);
-        _orderRepository.Add(order);
-
-        await _unitOfWork.SaveChanges();
-
-        return order.Id;
-    }
+            var paymentIntent = await _paymentService.CreateCardPayment(order.Id, order.TotalPrice);
+            order.PaymentId = paymentIntent.PaymentId;
+            
+            _orderRepository.Add(order);
+            await _unitOfWork.SaveChanges();
+            
+            return paymentIntent;
+        });
 
     public async Task<List<OrderDTO>> GetAllOrders()
     {
@@ -90,7 +98,7 @@ public class OrderService : IOrderService {
         var order = await _orderRepository.GetWithItems(id);
 
         try {
-            Status enumStatus = Enum.Parse<Status>(request.OrderStatus.Trim(), ignoreCase: true);
+            OrderStatus enumStatus = Enum.Parse<OrderStatus>(request.OrderStatus.Trim(), ignoreCase: true);
             order.OrderStatus = enumStatus;
         } catch(ArgumentException) {
             throw new InvalidDomainValueException($"{request.OrderStatus} is not a valid order status.");

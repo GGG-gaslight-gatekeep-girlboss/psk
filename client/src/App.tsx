@@ -3,24 +3,21 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { useCurrentUser } from "./features/users/api/get-current-user";
 import { TokenMetadata } from "./features/users/types";
 import { useUserStore } from "./features/users/user-store";
+import { AddEmployeeAdminRoute } from "./routes/admin/add-employee";
+import { AddProductAdminRoute } from "./routes/admin/add-product";
+import { EditEmployeeAdminRoute } from "./routes/admin/edit-employee";
+import { EditProductAdminRoute } from "./routes/admin/edit-product";
+import { EmployeesAdminRoute } from "./routes/admin/employees";
+import { OrderAdminRoute } from "./routes/admin/order";
+import { OrdersAdminRoute } from "./routes/admin/orders";
+import { ProductsAdminRoute } from "./routes/admin/products";
 import { HomeRoute } from "./routes/home";
 import LoginRoute from "./routes/login";
 import { ProtectedRoute } from "./routes/protected-route";
 import RegisterRoute from "./routes/register";
 import { CoreLayout } from "./shared/components/core-layout";
 import { paths } from "./shared/config/paths";
-import {
-  getLocalStorageItem,
-  removeLocalStorageItem,
-} from "./shared/utils/local-storage";
-import { EmployeesAdminRoute } from "./routes/admin/employees";
-import { AddEmployeeAdminRoute } from "./routes/admin/add-employee";
-import { EditEmployeeAdminRoute } from "./routes/admin/edit-employee";
-import { ProductsAdminRoute } from "./routes/admin/products";
-import { AddProductAdminRoute } from "./routes/admin/add-product";
-import { EditProductAdminRoute } from "./routes/admin/edit-product";
-import { OrdersAdminRoute } from "./routes/admin/orders";
-import { OrderAdminRoute } from "./routes/admin/order";
+import { getLocalStorageItem, removeLocalStorageItem } from "./shared/utils/local-storage";
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -29,6 +26,10 @@ function App() {
   const currentUserQuery = useCurrentUser({ queryConfig: { enabled: false } });
 
   useEffect(() => {
+    if (user !== undefined) {
+      return;
+    }
+
     const tokenMetadata = getLocalStorageItem<TokenMetadata>({
       key: "coffeeshop-access-token-metadata",
     });
@@ -72,45 +73,17 @@ function App() {
           <Route path={paths.home.path} element={<HomeRoute />} />
 
           <Route element={<ProtectedRoute allowedRoles={["BusinessOwner"]} />}>
-            <Route
-              path={paths.admin.employees.path}
-              element={<EmployeesAdminRoute />}
-            />
-            <Route
-              path={paths.admin.addEmployee.path}
-              element={<AddEmployeeAdminRoute />}
-            />
-            <Route
-              path={paths.admin.editEmployee.path}
-              element={<EditEmployeeAdminRoute />}
-            />
+            <Route path={paths.admin.employees.path} element={<EmployeesAdminRoute />} />
+            <Route path={paths.admin.addEmployee.path} element={<AddEmployeeAdminRoute />} />
+            <Route path={paths.admin.editEmployee.path} element={<EditEmployeeAdminRoute />} />
           </Route>
 
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={["BusinessOwner", "Employee"]} />
-            }
-          >
-            <Route
-              path={paths.admin.products.path}
-              element={<ProductsAdminRoute />}
-            />
-            <Route
-              path={paths.admin.addProduct.path}
-              element={<AddProductAdminRoute />}
-            />
-            <Route
-              path={paths.admin.editProduct.path}
-              element={<EditProductAdminRoute />}
-            />
-            <Route
-              path={paths.admin.orders.path}
-              element={<OrdersAdminRoute />}
-            />
-            <Route
-              path={paths.admin.order.path}
-              element={<OrderAdminRoute />}
-            />
+          <Route element={<ProtectedRoute allowedRoles={["BusinessOwner", "Employee"]} />}>
+            <Route path={paths.admin.products.path} element={<ProductsAdminRoute />} />
+            <Route path={paths.admin.addProduct.path} element={<AddProductAdminRoute />} />
+            <Route path={paths.admin.editProduct.path} element={<EditProductAdminRoute />} />
+            <Route path={paths.admin.orders.path} element={<OrdersAdminRoute />} />
+            <Route path={paths.admin.order.path} element={<OrderAdminRoute />} />
           </Route>
         </Route>
       </Routes>

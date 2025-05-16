@@ -1,9 +1,11 @@
+using CoffeeShop.BusinessLogic.OrderManagement.Enums;
+
 namespace CoffeeShop.BusinessLogic.OrderManagement.DTOs;
 
 public sealed record OrderDTO(
     Guid Id,
     OrderCustomerDTO Customer,
-    string Status,
+    OrderStatus Status,
     List<OrderItemDTO> Items,
     decimal TotalPrice,
     DateTimeOffset PickupTime,
