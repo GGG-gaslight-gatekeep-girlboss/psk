@@ -15,6 +15,7 @@ public class OrderRepository : BaseRepository<Order>, IOrderRepository{
         return await DbSet
             .Where(order => order.CreatedById == userId && !order.IsDeleted)
             .Include(order => order.Items)
+            .Include(order => order.CreatedBy)
             .Where(o => o.Payment.Status == PaymentStatus.Succeeded)
             .ToListAsync();
     }

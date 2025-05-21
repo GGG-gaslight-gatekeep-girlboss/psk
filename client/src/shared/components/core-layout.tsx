@@ -11,6 +11,7 @@ import { showSuccessNotification } from "../utils/notifications";
 export function CoreLayout() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+  const clearCart = useCartStore((state) => state.clear);
   const showNavbar = user?.role === "Employee" || user?.role === "BusinessOwner";
   const cartItemCount = useCartStore((state) => state.items.reduce((acc, item) => acc + item.quantity, 0));
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export function CoreLayout() {
       onSuccess: () => {
         showSuccessNotification({ message: "Goodbye mate!" });
         setUser(null);
+        clearCart();
         removeLocalStorageItem({ key: "coffeeshop-access-token-metadata" });
       },
     },
@@ -31,6 +33,10 @@ export function CoreLayout() {
 
   const navigateToCart = () => {
     navigate(paths.cart.getHref());
+  };
+
+  const navigateToOrders = () => {
+    navigate(paths.orders.getHref());
   };
 
   return (
@@ -68,6 +74,7 @@ export function CoreLayout() {
                   <Menu.Label>
                     Hello, {user.firstName} {user.lastName}!
                   </Menu.Label>
+                  <Menu.Item onClick={navigateToOrders}>My orders</Menu.Item>
                   <Menu.Item onClick={logout}>Log out</Menu.Item>
                 </Menu.Dropdown>
               </Menu>

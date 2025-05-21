@@ -7,6 +7,7 @@ type CartState = {
   totalPrice: number;
   addToCart: (product: Product, quantity: number) => void;
   removeFromCart: (productId: string) => void;
+  clear: () => void;
 };
 
 export const useCartStore = create<CartState>((set) => ({
@@ -35,4 +36,5 @@ export const useCartStore = create<CartState>((set) => ({
       const totalPrice = items.reduce((acc, item) => acc + item.totalPrice, 0);
       return { items, totalPrice };
     }),
+  clear: () => set(() => ({ items: [], totalPrice: 0 })),
 }));

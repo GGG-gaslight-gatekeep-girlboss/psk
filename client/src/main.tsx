@@ -20,7 +20,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>
-        <DatesProvider>
+        <DatesProvider settings={{}}>
           <Notifications />
           <App />
         </DatesProvider>

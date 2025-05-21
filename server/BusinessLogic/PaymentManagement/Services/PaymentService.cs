@@ -40,7 +40,7 @@ public class PaymentService : IPaymentService
         return paymentIntent with { PaymentId = payment.Id };
     }
 
-    public async Task ConfirmCardPayment(string paymentIntentId)
+    public async Task<CardPayment> ConfirmCardPayment(string paymentIntentId)
     {
         var payment = await _cardPaymentRepository.GetPaymentByIntentId(paymentIntentId);
         var stripePaymentStatus = await _stripeService.GetPaymentIntentStatus(paymentIntentId);
@@ -49,5 +49,7 @@ public class PaymentService : IPaymentService
             payment.Status = PaymentStatus.Succeeded;
             await _unitOfWork.SaveChanges();
         }
+
+        return payment;
     }
 }

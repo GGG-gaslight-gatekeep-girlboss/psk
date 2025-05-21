@@ -10,6 +10,7 @@ using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace CoffeeShop.BusinessLogic.OrderManagement.Services;
 
@@ -20,6 +21,7 @@ public class OrderService : IOrderService {
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentService _paymentService;
+    private readonly ILogger<OrderService> _logger;
 
     public OrderService(
         IOrderRepository orderRepository,
@@ -27,7 +29,8 @@ public class OrderService : IOrderService {
         IProductRepository productRepository,
         ICurrentUserAccessor currentUserAccessor,
         IUnitOfWork unitOfWork,
-        IPaymentService paymentService)
+        IPaymentService paymentService,
+        ILogger<OrderService> logger)
     {
         _orderRepository = orderRepository;
         _orderMappingService = orderMappingService;
@@ -35,6 +38,7 @@ public class OrderService : IOrderService {
         _currentUserAccessor = currentUserAccessor;
         _unitOfWork = unitOfWork;
         _paymentService = paymentService;
+        _logger = logger;
     }
 
     public Task<PaymentIntentDTO> CreateOrder(CreateOrderDTO dto) =>
@@ -127,9 +131,10 @@ public class OrderService : IOrderService {
         if (pickupTime <= now)
             throw new InvalidDomainValueException("Pickup time must be in the future.");
 
-        var pickupLocalTime = TimeOnly.FromTimeSpan(pickupTime.ToLocalTime().TimeOfDay);
-        if (pickupLocalTime < Constants.Open || pickupLocalTime > Constants.Close)
-            throw new InvalidDomainValueException($"Pickup time must be between {Constants.Open:hh\\:mm} and {Constants.Close:hh\\:mm}.");
+        var eetPickupTime = ChangeToEET(pickupTime);
+        var eetPickupTimeOfDay = TimeOnly.FromTimeSpan(eetPickupTime.TimeOfDay);
+        if (eetPickupTimeOfDay < Constants.Open || eetPickupTimeOfDay > Constants.Close)
+            throw new InvalidDomainValueException($"Pickup time must be between {Constants.Open:HH\\:mm} and {Constants.Close:HH\\:mm}.");
     }
 
     private async Task ValidateOrderItems(List<CreateOrderItemDTO> dtos)
@@ -171,4 +176,10 @@ public class OrderService : IOrderService {
         return items;
     }
 
+    private DateTimeOffset ChangeToEET(DateTimeOffset original)
+    {
+        var eetInfo = TimeZoneInfo.FindSystemTimeZoneById("E. Europe Standard Time");
+        var eetTime = TimeZoneInfo.ConvertTime(original, eetInfo);
+        return original.ToOffset(eetTime.Offset);
+    }
 }

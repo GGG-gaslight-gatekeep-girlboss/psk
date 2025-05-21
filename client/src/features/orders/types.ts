@@ -34,3 +34,7 @@ export type OrderCustomer = {
   lastName: string;
   phoneNumber: string;
 };
+
+export type CardPayment = {
+  orderId: string;
+};

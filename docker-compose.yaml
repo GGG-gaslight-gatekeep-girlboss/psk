@@ -53,17 +53,17 @@ services:
       retries: 5
       start_period: 5s
 
-  # coffee-shop.client:
-  #   image: coffee-shop-client:latest
-  #   container_name: coffee-shop.client
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #   ports:
-  #   - "3000:80"
-  #   depends_on:
-  #     coffee-shop.server:
-  #       condition: service_healthy
+  coffee-shop.client:
+    image: coffee-shop-client:latest
+    container_name: coffee-shop.client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+    - "3000:80"
+    depends_on:
+      coffee-shop.server:
+        condition: service_healthy
 
 volumes:
   postgres_data:

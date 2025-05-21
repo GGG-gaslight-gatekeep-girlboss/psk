@@ -1,28 +1,26 @@
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
+import { Button, Group } from "@mantine/core";
+import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { useState } from "react";
+import { paths } from "../../../shared/config/paths";
 import { stripePromise } from "../../../shared/config/stripe";
-import { Button } from "@mantine/core";
-import { useCartStore } from "../cart-store";
 import { useCreateOrder } from "../api/create-order";
+import { useCartStore } from "../cart-store";
 
-export const StripeCheckout = (props: { getPickupTime: () => Date | null }) => {
+export const StripeCheckout = (props: { getPickupTime: () => Date | null; onBackClick: () => void }) => {
   const amount = useCartStore((state) => state.totalPrice);
 
   return (
     <Elements
       stripe={stripePromise}
-      options={{ mode: "payment", amount: amount * 100, currency: "eur" }}
+      options={{ mode: "payment", amount: Math.round(amount * 100), currency: "eur", paymentMethodTypes: ["card"] }}
     >
-      <CheckoutForm getPickupTime={props.getPickupTime} />
+      <CheckoutForm getPickupTime={props.getPickupTime} onBackClick={props.onBackClick} />
     </Elements>
   );
 };
 
-const CheckoutForm = (props: { getPickupTime: () => Date | null }) => {
+const CheckoutForm = (props: { getPickupTime: () => Date | null; onBackClick: () => void }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const cartItems = useCartStore((state) => state.items);
   const stripe = useStripe();
   const elements = useElements();
@@ -35,33 +33,41 @@ const CheckoutForm = (props: { getPickupTime: () => Date | null }) => {
         }
 
         try {
-          const result = await stripe.confirmPayment({
+          await stripe.confirmPayment({
+            elements: elements,
             clientSecret: paymentIntent.clientSecret,
             confirmParams: {
-              return_url: "https://google.com",
+              return_url: `http://localhost:3000${paths.orderCompleted.getHref()}`,
             },
           });
-
-          console.log(result);
         } catch (err) {
           console.log(err);
+        } finally {
+          setIsLoading(false);
         }
+      },
+      onError: () => {
+        setIsLoading(false);
       },
     },
   });
 
-  const createOrder = (event: any) => {
+  const createOrder = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     const pickupTime = props.getPickupTime();
-    if (!pickupTime) {
+    if (!pickupTime || !elements) {
       return;
     }
+
+    setIsLoading(true);
 
     const orderItems = cartItems.map((x) => ({
       productId: x.productId,
       quantity: x.quantity,
     }));
+
+    await elements.submit();
 
     createOrderMutation.mutate({
       data: {
@@ -74,7 +80,15 @@ const CheckoutForm = (props: { getPickupTime: () => Date | null }) => {
   return (
     <form onSubmit={createOrder}>
       <PaymentElement />
-      <Button type="submit">Pay</Button>
+
+      <Group justify="space-between" mt="lg">
+        <Button variant="default" onClick={props.onBackClick}>
+          Back
+        </Button>
+        <Button type="submit" loading={isLoading}>
+          Pay
+        </Button>
+      </Group>
     </form>
   );
 };

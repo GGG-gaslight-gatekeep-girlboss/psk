@@ -1,25 +1,12 @@
-import {
-  Button,
-  Container,
-  Group,
-  Paper,
-  Stack,
-  Stepper,
-  Table,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Button, Container, Group, Paper, Stack, Stepper, Table, Text, Title } from "@mantine/core";
 import { DatePicker, getTimeRange, TimeGrid } from "@mantine/dates";
-import { Elements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { paths } from "../../../shared/config/paths";
-import { stripePromise } from "../../../shared/config/stripe";
 import { formatPrice } from "../../../shared/utils/format";
 import { useUserStore } from "../../users/user-store";
 import { useCartStore } from "../cart-store";
 import { StripeCheckout } from "./stripe-checkout";
-import { useCreateOrder } from "../api/create-order";
 
 export const OrderCheckout = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
@@ -29,7 +16,6 @@ export const OrderCheckout = () => {
   const currentUser = useUserStore((state) => state.user!);
   const cartItems = useCartStore((state) => state.items);
   const cartTotal = useCartStore((state) => state.totalPrice);
-  const createOrderMutation = useCreateOrder({});
 
   const now = new Date();
 
@@ -64,10 +50,7 @@ export const OrderCheckout = () => {
   };
 
   const onNextStepClick = () => {
-    if (activeStep === 2) {
-    } else {
-      setActiveStep((current) => (current < 3 ? current + 1 : current));
-    }
+    setActiveStep((current) => (current < 3 ? current + 1 : current));
   };
 
   const onPrevStepClick = () => {
@@ -87,6 +70,10 @@ export const OrderCheckout = () => {
     </Table.Tr>
   ));
 
+  if (cartItems.length === 0) {
+    return <Navigate to={paths.home.getHref()} />;
+  }
+
   return (
     <Container>
       <Title order={3} my="md">
@@ -97,16 +84,9 @@ export const OrderCheckout = () => {
           <Stepper.Step label="Pickup day & time" mt="sm">
             <Group justify="space-around" align="start">
               <Paper withBorder>
-                <DatePicker
-                  value={date}
-                  onChange={(x) => setDate(new Date(x))}
-                  minDate={now}
-                />
+                <DatePicker value={date} onChange={(x) => setDate(new Date(x))} minDate={now} />
               </Paper>
-              <Paper
-                mah={320}
-                style={{ overflowY: "auto", overflowX: "hidden" }}
-              >
+              <Paper mah={320} style={{ overflowY: "auto", overflowX: "hidden" }}>
                 <TimeGrid
                   data={getTimeRange({
                     startTime: "10:00",
@@ -154,18 +134,20 @@ export const OrderCheckout = () => {
           </Stepper.Step>
 
           <Stepper.Step label="Payment">
-            <StripeCheckout getPickupTime={getPickupTime} />
+            <StripeCheckout getPickupTime={getPickupTime} onBackClick={onPrevStepClick} />
           </Stepper.Step>
         </Stepper>
 
-        <Group justify="space-between" mt="lg">
-          <Button variant="default" onClick={onPrevStepClick}>
-            {activeStep === 0 ? "Cancel" : "Back"}
-          </Button>
-          <Button onClick={onNextStepClick} disabled={!time}>
-            {activeStep === 2 ? "Pay" : "Next"}
-          </Button>
-        </Group>
+        {activeStep !== 2 && (
+          <Group justify="space-between" mt="lg">
+            <Button variant="default" onClick={onPrevStepClick}>
+              {activeStep === 0 ? "Cancel" : "Back"}
+            </Button>
+            <Button onClick={onNextStepClick} disabled={!time}>
+              Next
+            </Button>
+          </Group>
+        )}
       </Paper>
     </Container>
   );

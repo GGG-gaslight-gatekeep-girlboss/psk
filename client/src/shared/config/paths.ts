@@ -19,6 +19,14 @@ export const paths = {
     path: "/cart",
     getHref: () => "/cart",
   },
+  orderCompleted: {
+    path: "/order-completed",
+    getHref: () => "/order-completed",
+  },
+  orders: {
+    path: "/orders",
+    getHref: () => "/orders",
+  },
   admin: {
     employees: {
       path: "/admin/employees",
