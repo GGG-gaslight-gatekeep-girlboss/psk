@@ -21,7 +21,6 @@ public class OrderService : IOrderService {
     private readonly ICurrentUserAccessor _currentUserAccessor;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentService _paymentService;
-    private readonly ILogger<OrderService> _logger;
 
     public OrderService(
         IOrderRepository orderRepository,
@@ -29,8 +28,7 @@ public class OrderService : IOrderService {
         IProductRepository productRepository,
         ICurrentUserAccessor currentUserAccessor,
         IUnitOfWork unitOfWork,
-        IPaymentService paymentService,
-        ILogger<OrderService> logger)
+        IPaymentService paymentService)
     {
         _orderRepository = orderRepository;
         _orderMappingService = orderMappingService;
@@ -38,7 +36,6 @@ public class OrderService : IOrderService {
         _currentUserAccessor = currentUserAccessor;
         _unitOfWork = unitOfWork;
         _paymentService = paymentService;
-        _logger = logger;
     }
 
     public Task<PaymentIntentDTO> CreateOrder(CreateOrderDTO dto) =>
