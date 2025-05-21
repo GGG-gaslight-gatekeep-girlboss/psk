@@ -1,6 +1,16 @@
-import { Button, Container, Group, Paper, Stack, Stepper, Table, Text, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Group,
+  Paper,
+  Stack,
+  Stepper,
+  Table,
+  Text,
+  Title,
+} from "@mantine/core";
 import { DatePicker, getTimeRange, TimeGrid } from "@mantine/dates";
-import { Elements } from "@stripe/react-stripe-js";
+import { Elements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { paths } from "../../../shared/config/paths";
@@ -8,24 +18,18 @@ import { stripePromise } from "../../../shared/config/stripe";
 import { formatPrice } from "../../../shared/utils/format";
 import { useUserStore } from "../../users/user-store";
 import { useCartStore } from "../cart-store";
-import { CheckoutForm } from "./checkout-form";
+import { StripeCheckout } from "./stripe-checkout";
+import { useCreateOrder } from "../api/create-order";
 
 export const OrderCheckout = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [date, setDate] = useState<Date>(new Date());
   const [time, setTime] = useState<string | null>(null);
   const navigate = useNavigate();
-  const nextStep = () => setActiveStep((current) => (current < 3 ? current + 1 : current));
-  const prevStep = () => {
-    if (activeStep === 0) {
-      navigate(paths.cart.getHref());
-    } else {
-      setActiveStep((current) => (current > 0 ? current - 1 : current));
-    }
-  };
   const currentUser = useUserStore((state) => state.user!);
   const cartItems = useCartStore((state) => state.items);
   const cartTotal = useCartStore((state) => state.totalPrice);
+  const createOrderMutation = useCreateOrder({});
 
   const now = new Date();
 
@@ -43,6 +47,35 @@ export const OrderCheckout = () => {
     const hours = now.getHours();
     const minutes = now.getMinutes();
     return `${hours}:${minutes}`;
+  };
+
+  const getPickupTime = () => {
+    if (!time) {
+      return null;
+    }
+
+    const pickupTime = new Date(date);
+    const splitTime = time.split(":").map((x) => parseInt(x));
+    pickupTime.setHours(splitTime[0]);
+    pickupTime.setMinutes(splitTime[1]);
+    pickupTime.setSeconds(splitTime[2]);
+
+    return pickupTime;
+  };
+
+  const onNextStepClick = () => {
+    if (activeStep === 2) {
+    } else {
+      setActiveStep((current) => (current < 3 ? current + 1 : current));
+    }
+  };
+
+  const onPrevStepClick = () => {
+    if (activeStep === 0) {
+      navigate(paths.cart.getHref());
+    } else {
+      setActiveStep((current) => (current > 0 ? current - 1 : current));
+    }
   };
 
   const cartItemRows = cartItems.map((item) => (
@@ -64,11 +97,22 @@ export const OrderCheckout = () => {
           <Stepper.Step label="Pickup day & time" mt="sm">
             <Group justify="space-around" align="start">
               <Paper withBorder>
-                <DatePicker value={date} onChange={(x) => setDate(new Date(x))} minDate={now} />
+                <DatePicker
+                  value={date}
+                  onChange={(x) => setDate(new Date(x))}
+                  minDate={now}
+                />
               </Paper>
-              <Paper mah={320} style={{ overflowY: "auto", overflowX: "hidden" }}>
+              <Paper
+                mah={320}
+                style={{ overflowY: "auto", overflowX: "hidden" }}
+              >
                 <TimeGrid
-                  data={getTimeRange({ startTime: "10:00", endTime: "20:00", interval: "00:10" })}
+                  data={getTimeRange({
+                    startTime: "10:00",
+                    endTime: "20:00",
+                    interval: "00:10",
+                  })}
                   simpleGridProps={{
                     cols: 1,
                     spacing: "xs",
@@ -110,17 +154,15 @@ export const OrderCheckout = () => {
           </Stepper.Step>
 
           <Stepper.Step label="Payment">
-            <Elements stripe={stripePromise} options={{ mode: "payment", amount: 1999, currency: "eur" }}>
-              <CheckoutForm amount={0} />
-            </Elements>
+            <StripeCheckout getPickupTime={getPickupTime} />
           </Stepper.Step>
         </Stepper>
 
         <Group justify="space-between" mt="lg">
-          <Button variant="default" onClick={prevStep}>
+          <Button variant="default" onClick={onPrevStepClick}>
             {activeStep === 0 ? "Cancel" : "Back"}
           </Button>
-          <Button onClick={nextStep} disabled={!time}>
+          <Button onClick={onNextStepClick} disabled={!time}>
             {activeStep === 2 ? "Pay" : "Next"}
           </Button>
         </Group>
