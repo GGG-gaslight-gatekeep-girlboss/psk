@@ -12,7 +12,7 @@ public class StripeService : IStripeService
 
     public StripeService(PaymentIntentService paymentIntentService)
     {
-        _paymentIntentService = new PaymentIntentService();
+        _paymentIntentService = paymentIntentService;
     }
 
     public async Task<PaymentIntentDTO> CreatePaymentIntent(decimal paymentAmount)

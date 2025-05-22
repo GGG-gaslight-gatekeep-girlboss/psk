@@ -188,8 +188,7 @@ public static class ConfigureServicesExtensions
     {
         services.AddScoped<ICardPaymentRepository, CardPaymentRepository>();
         services.AddScoped<IPaymentService, PaymentService>();
-        services.AddScoped<IStripeService, StripeService>();
-        services.AddScoped<PaymentIntentService>();
+        services.AddScoped<IStripeService, StripeService>(_ => new StripeService(new PaymentIntentService()));
 
         StripeConfiguration.ApiKey = configuration["Stripe:ApiKey"];
 
