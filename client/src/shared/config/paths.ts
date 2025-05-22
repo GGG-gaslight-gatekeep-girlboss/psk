@@ -11,6 +11,22 @@ export const paths = {
     path: "/register",
     getHref: () => "/register",
   },
+  checkout: {
+    path: "/checkout",
+    getHref: () => "/checkout",
+  },
+  cart: {
+    path: "/cart",
+    getHref: () => "/cart",
+  },
+  orderCompleted: {
+    path: "/order-completed",
+    getHref: () => "/order-completed",
+  },
+  orders: {
+    path: "/orders",
+    getHref: () => "/orders",
+  },
   admin: {
     employees: {
       path: "/admin/employees",

@@ -11,8 +11,12 @@ import { EmployeesAdminRoute } from "./routes/admin/employees";
 import { OrderAdminRoute } from "./routes/admin/order";
 import { OrdersAdminRoute } from "./routes/admin/orders";
 import { ProductsAdminRoute } from "./routes/admin/products";
+import { CartRoute } from "./routes/cart";
+import { CheckoutRoute } from "./routes/checkout";
 import { HomeRoute } from "./routes/home";
 import LoginRoute from "./routes/login";
+import { OrderCompletedRoute } from "./routes/order-completed";
+import { OrdersRoute } from "./routes/orders";
 import { ProtectedRoute } from "./routes/protected-route";
 import RegisterRoute from "./routes/register";
 import { CoreLayout } from "./shared/components/core-layout";
@@ -71,6 +75,13 @@ function App() {
 
         <Route element={<CoreLayout />}>
           <Route path={paths.home.path} element={<HomeRoute />} />
+
+          <Route element={<ProtectedRoute allowedRoles={["Client"]} />}>
+            <Route path={paths.checkout.path} element={<CheckoutRoute />} />
+            <Route path={paths.cart.path} element={<CartRoute />} />
+            <Route path={paths.orderCompleted.path} element={<OrderCompletedRoute />} />
+            <Route path={paths.orders.path} element={<OrdersRoute />} />
+          </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["BusinessOwner"]} />}>
             <Route path={paths.admin.employees.path} element={<EmployeesAdminRoute />} />

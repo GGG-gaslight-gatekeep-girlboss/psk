@@ -1,13 +1,7 @@
-import {
-  Anchor,
-  AppShell,
-  Avatar,
-  Button,
-  Group,
-  Menu,
-  NavLink,
-} from "@mantine/core";
-import { Link, Outlet } from "react-router-dom";
+import { ActionIcon, Anchor, AppShell, Avatar, Button, Group, Menu, NavLink, Text } from "@mantine/core";
+import { IconBasket } from "@tabler/icons-react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useCartStore } from "../../features/orders/cart-store";
 import { useLogout } from "../../features/users/api/logout";
 import { useUserStore } from "../../features/users/user-store";
 import { paths } from "../config/paths";
@@ -17,14 +11,17 @@ import { showSuccessNotification } from "../utils/notifications";
 export function CoreLayout() {
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
-  const showNavbar =
-    user?.role === "Employee" || user?.role === "BusinessOwner";
+  const clearCart = useCartStore((state) => state.clear);
+  const showNavbar = user?.role === "Employee" || user?.role === "BusinessOwner";
+  const cartItemCount = useCartStore((state) => state.items.reduce((acc, item) => acc + item.quantity, 0));
+  const navigate = useNavigate();
 
   const logoutMutation = useLogout({
     mutationConfig: {
       onSuccess: () => {
         showSuccessNotification({ message: "Goodbye mate!" });
         setUser(null);
+        clearCart();
         removeLocalStorageItem({ key: "coffeeshop-access-token-metadata" });
       },
     },
@@ -32,6 +29,14 @@ export function CoreLayout() {
 
   const logout = () => {
     logoutMutation.mutate(undefined);
+  };
+
+  const navigateToCart = () => {
+    navigate(paths.cart.getHref());
+  };
+
+  const navigateToOrders = () => {
+    navigate(paths.orders.getHref());
   };
 
   return (
@@ -50,22 +55,30 @@ export function CoreLayout() {
           </Anchor>
 
           {user ? (
-            <Menu withArrow width={200} shadow="md">
-              <Menu.Target>
-                <Avatar
-                  radius="xl"
-                  color="initials"
-                  name={`${user.firstName} ${user.lastName}`}
-                />
-              </Menu.Target>
+            <Group>
+              <div style={{ position: "relative" }}>
+                <ActionIcon size="lg" variant="light" radius="xl" onClick={navigateToCart}>
+                  <IconBasket style={{ width: "75%", height: "75%" }} stroke={1.5} />
+                </ActionIcon>
+                <Text size="sm" fw={600} pos="absolute" bottom={22} left={26} c="blue">
+                  {cartItemCount}
+                </Text>
+              </div>
 
-              <Menu.Dropdown>
-                <Menu.Label>
-                  Hello, {user.firstName} {user.lastName}!
-                </Menu.Label>
-                <Menu.Item onClick={logout}>Log out</Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
+              <Menu withArrow width={200} shadow="md">
+                <Menu.Target>
+                  <Avatar radius="xl" color="initials" name={`${user.firstName} ${user.lastName}`} />
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                  <Menu.Label>
+                    Hello, {user.firstName} {user.lastName}!
+                  </Menu.Label>
+                  <Menu.Item onClick={navigateToOrders}>My orders</Menu.Item>
+                  <Menu.Item onClick={logout}>Log out</Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </Group>
           ) : (
             <Button component={Link} to={paths.login.getHref()}>
               Log in
@@ -77,23 +90,11 @@ export function CoreLayout() {
       {user && showNavbar && (
         <AppShell.Navbar>
           {user.role === "BusinessOwner" && (
-            <NavLink
-              label="Employee management"
-              component={Link}
-              to={paths.admin.employees.getHref()}
-            />
+            <NavLink label="Employee management" component={Link} to={paths.admin.employees.getHref()} />
           )}
 
-          <NavLink
-            label="Product management"
-            component={Link}
-            to={paths.admin.products.getHref()}
-          />
-          <NavLink
-            label="Order management"
-            component={Link}
-            to={paths.admin.orders.getHref()}
-          />
+          <NavLink label="Product management" component={Link} to={paths.admin.products.getHref()} />
+          <NavLink label="Order management" component={Link} to={paths.admin.orders.getHref()} />
         </AppShell.Navbar>
       )}
 

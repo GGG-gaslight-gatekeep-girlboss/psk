@@ -15,6 +15,11 @@ export type Order = {
   items: OrderItem[];
 };
 
+export type PaymentIntent = {
+  paymentIntentId: string;
+  clientSecret: string;
+};
+
 export type OrderItem = {
   productId: string;
   productName: string;
@@ -28,4 +33,8 @@ export type OrderCustomer = {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+};
+
+export type CardPayment = {
+  orderId: string;
 };
