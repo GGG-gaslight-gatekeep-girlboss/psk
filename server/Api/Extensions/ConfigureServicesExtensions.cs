@@ -24,6 +24,7 @@ using CoffeeShop.DataAccess.ProductManagement.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Stripe;
 using ProductService = CoffeeShop.BusinessLogic.ProductManagement.Services.ProductService;
@@ -142,7 +143,13 @@ public static class ConfigureServicesExtensions
 
     public static IServiceCollection AddProductManagement(this IServiceCollection services)
     {
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductRepository>(serviceProvider =>
+        {
+            var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            var cache = serviceProvider.GetRequiredService<IMemoryCache>();
+            
+            return new CachedProductRepository(new ProductRepository(dbContext), cache);
+        });
         services.AddScoped<IProductMappingService, ProductMappingService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IProductImageService, ProductImageService>();
