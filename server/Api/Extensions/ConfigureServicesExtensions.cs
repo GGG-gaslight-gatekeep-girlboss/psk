@@ -147,8 +147,12 @@ public static class ConfigureServicesExtensions
         {
             var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
             var cache = serviceProvider.GetRequiredService<IMemoryCache>();
+            var logger = serviceProvider.GetRequiredService<ILogger<CachedProductRepository>>();
             
-            return new CachedProductRepository(new ProductRepository(dbContext), cache);
+            return new CachedProductRepository(
+                new ProductRepository(dbContext),
+                cache,
+                logger);
         });
         services.AddScoped<IProductMappingService, ProductMappingService>();
         services.AddScoped<IProductService, ProductService>();
