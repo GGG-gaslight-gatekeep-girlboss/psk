@@ -21,9 +21,11 @@ using CoffeeShop.DataAccess.Common.Repositories;
 using CoffeeShop.DataAccess.OrderManagement.Repositories;
 using CoffeeShop.DataAccess.PaymentManagement.Repositories;
 using CoffeeShop.DataAccess.ProductManagement.Repositories;
+using CoffeeShop.DataAccess.ProductManagement.Strategies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Stripe;
 using ProductService = CoffeeShop.BusinessLogic.ProductManagement.Services.ProductService;
@@ -140,14 +142,55 @@ public static class ConfigureServicesExtensions
         return services;
     }
 
-    public static IServiceCollection AddProductManagement(this IServiceCollection services)
+    public static IServiceCollection AddProductManagement(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddSingleton<IMemoryCache, MemoryCache>();
         services.AddScoped<IProductMappingService, ProductMappingService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IProductImageService, ProductImageService>();
+        services.AddProductSortingStrategy(configuration);
+        services.AddProductRepository(configuration);
 
         return services;
+    }
+
+    private static void AddProductRepository(this IServiceCollection services, IConfiguration configuration)
+    {
+        var productRepositoryDecorator = configuration["Decorators:ProductRepository"];
+        if (productRepositoryDecorator == nameof(CachedProductRepository))
+        {
+            services.AddScoped<IProductRepository>(serviceProvider =>
+            {
+                var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+                var cache = serviceProvider.GetRequiredService<IMemoryCache>();
+                var logger = serviceProvider.GetRequiredService<ILogger<CachedProductRepository>>();
+                var productSortingContext = serviceProvider.GetRequiredService<ProductSortingContext>();
+            
+                return new CachedProductRepository(
+                    new ProductRepository(dbContext, productSortingContext),
+                    cache,
+                    logger);
+            });
+        }
+        else
+        {
+            services.AddScoped<IProductRepository, ProductRepository>();
+        }
+    }
+
+    private static void AddProductSortingStrategy(this IServiceCollection services, IConfiguration configuration)
+    {
+        var productSortingStrategy = configuration["Strategies:ProductSorting"];
+        if (productSortingStrategy == nameof(ProductSortingByNameStrategy))
+        {
+            services.AddScoped<IProductSortingStrategy, ProductSortingByNameStrategy>();
+        }
+        else
+        {
+            services.AddScoped<IProductSortingStrategy, ProductSortingByPriceStrategy>();
+        }
+        
+        services.AddScoped<ProductSortingContext>();
     }
 
     private static void AddCloudflareBlobStorage(

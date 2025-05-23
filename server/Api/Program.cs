@@ -15,7 +15,7 @@ builder.Configuration.AddEnvironmentVariables().AddDotNetEnv(".env");
 builder
     .Services.AddSharedServices(builder.Environment, builder.Configuration)
     .AddOrderManagement()
-    .AddProductManagement()
+    .AddProductManagement(builder.Configuration)
     .AddUserManagement(builder.Configuration)
     .AddPaymentManagement(builder.Configuration);
 
@@ -84,10 +84,13 @@ else
     app.UseMiddleware<ProductionExceptionHandlingMiddleware>();
 }
 
-app.UseMiddleware<UserContextLoggingMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+if (app.Configuration.GetValue<bool>("Logging:LogInvokedEndpoint"))
+{
+    app.UseMiddleware<InvokedEndpointLoggingMiddleware>();
+}
 
 app.MapControllers();
 
