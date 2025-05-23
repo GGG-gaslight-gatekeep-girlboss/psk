@@ -84,10 +84,10 @@ else
     app.UseMiddleware<ProductionExceptionHandlingMiddleware>();
 }
 
-app.UseMiddleware<UserContextLoggingMiddleware>();
-
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<UserContextLoggingMiddleware>();
 
 app.MapControllers();
 
