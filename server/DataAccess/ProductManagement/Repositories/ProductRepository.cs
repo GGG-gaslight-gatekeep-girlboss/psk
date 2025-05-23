@@ -2,13 +2,19 @@ using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.ProductManagement.Entities;
 using CoffeeShop.BusinessLogic.ProductManagement.Interfaces;
 using CoffeeShop.DataAccess.Common.Repositories;
+using CoffeeShop.DataAccess.ProductManagement.Strategies;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShop.DataAccess.ProductManagement.Repositories;
 
 public class ProductRepository : BaseRepository<Product>, IProductRepository
 {
-    public ProductRepository(ApplicationDbContext dbContext) : base(dbContext) { }
+    private readonly ProductSortingContext _productSortingContext;
+    public ProductRepository(ApplicationDbContext dbContext, ProductSortingContext productSortingContext)
+        : base(dbContext)
+    {
+        _productSortingContext = productSortingContext;
+    }
 
     public async Task<Product> GetWithImage(Guid productId)
     {
@@ -22,9 +28,8 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
 
     public async Task<List<Product>> GetAllWithImages()
     {
-        return await DbSet
-            .Include(x => x.Image)
-            .ToListAsync();
+        var query = DbSet.Include(x => x.Image).AsQueryable();
+        return await _productSortingContext.Sort(query).ToListAsync();
     }
     
     public override string GetEntityNotFoundErrorMessage(Guid id)

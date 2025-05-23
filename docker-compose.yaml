@@ -34,6 +34,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       Decorators__ProductRepository: "CachedProductRepository"
+      Strategies__ProductSorting: "ProductSortingByNameStrategy"
     env_file: server/.env
     volumes:
       - server_logs:/logs

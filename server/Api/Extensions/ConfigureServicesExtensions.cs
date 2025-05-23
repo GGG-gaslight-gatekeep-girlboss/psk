@@ -21,6 +21,7 @@ using CoffeeShop.DataAccess.Common.Repositories;
 using CoffeeShop.DataAccess.OrderManagement.Repositories;
 using CoffeeShop.DataAccess.PaymentManagement.Repositories;
 using CoffeeShop.DataAccess.ProductManagement.Repositories;
+using CoffeeShop.DataAccess.ProductManagement.Strategies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -147,6 +148,7 @@ public static class ConfigureServicesExtensions
         services.AddScoped<IProductMappingService, ProductMappingService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IProductImageService, ProductImageService>();
+        services.AddProductSortingStrategy(configuration);
         services.AddProductRepository(configuration);
 
         return services;
@@ -162,9 +164,10 @@ public static class ConfigureServicesExtensions
                 var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
                 var cache = serviceProvider.GetRequiredService<IMemoryCache>();
                 var logger = serviceProvider.GetRequiredService<ILogger<CachedProductRepository>>();
+                var productSortingContext = serviceProvider.GetRequiredService<ProductSortingContext>();
             
                 return new CachedProductRepository(
-                    new ProductRepository(dbContext),
+                    new ProductRepository(dbContext, productSortingContext),
                     cache,
                     logger);
             });
@@ -173,6 +176,21 @@ public static class ConfigureServicesExtensions
         {
             services.AddScoped<IProductRepository, ProductRepository>();
         }
+    }
+
+    private static void AddProductSortingStrategy(this IServiceCollection services, IConfiguration configuration)
+    {
+        var productSortingStrategy = configuration["Strategies:ProductSorting"];
+        if (productSortingStrategy == nameof(ProductSortingByNameStrategy))
+        {
+            services.AddScoped<IProductSortingStrategy, ProductSortingByNameStrategy>();
+        }
+        else
+        {
+            services.AddScoped<IProductSortingStrategy, ProductSortingByPriceStrategy>();
+        }
+        
+        services.AddScoped<ProductSortingContext>();
     }
 
     private static void AddCloudflareBlobStorage(
