@@ -141,24 +141,38 @@ public static class ConfigureServicesExtensions
         return services;
     }
 
-    public static IServiceCollection AddProductManagement(this IServiceCollection services)
+    public static IServiceCollection AddProductManagement(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IProductRepository>(serviceProvider =>
-        {
-            var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
-            var cache = serviceProvider.GetRequiredService<IMemoryCache>();
-            var logger = serviceProvider.GetRequiredService<ILogger<CachedProductRepository>>();
-            
-            return new CachedProductRepository(
-                new ProductRepository(dbContext),
-                cache,
-                logger);
-        });
+        services.AddSingleton<IMemoryCache, MemoryCache>();
         services.AddScoped<IProductMappingService, ProductMappingService>();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IProductImageService, ProductImageService>();
+        services.AddProductRepository(configuration);
 
         return services;
+    }
+
+    private static void AddProductRepository(this IServiceCollection services, IConfiguration configuration)
+    {
+        var productRepositoryDecorator = configuration["Decorators:ProductRepository"];
+        if (productRepositoryDecorator == nameof(CachedProductRepository))
+        {
+            services.AddScoped<IProductRepository>(serviceProvider =>
+            {
+                var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+                var cache = serviceProvider.GetRequiredService<IMemoryCache>();
+                var logger = serviceProvider.GetRequiredService<ILogger<CachedProductRepository>>();
+            
+                return new CachedProductRepository(
+                    new ProductRepository(dbContext),
+                    cache,
+                    logger);
+            });
+        }
+        else
+        {
+            services.AddScoped<IProductRepository, ProductRepository>();
+        }
     }
 
     private static void AddCloudflareBlobStorage(

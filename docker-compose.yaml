@@ -33,6 +33,7 @@ services:
     container_name: coffee-shop.server
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
+      Decorators__ProductRepository: "CachedProductRepository"
     env_file: server/.env
     volumes:
       - server_logs:/logs
@@ -60,7 +61,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-    - "3000:80"
+      - "3000:80"
     depends_on:
       coffee-shop.server:
         condition: service_healthy
