@@ -87,7 +87,10 @@ else
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<UserContextLoggingMiddleware>();
+if (app.Configuration.GetValue<bool>("Logging:LogInvokedEndpoint"))
+{
+    app.UseMiddleware<InvokedEndpointLoggingMiddleware>();
+}
 
 app.MapControllers();
 
