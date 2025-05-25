@@ -1,11 +1,11 @@
-using CoffeeShop.DataAccess.Common.Repositories;
+using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.OrderManagement.Entities;
 using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
-using CoffeeShop.BusinessLogic.Common.Exceptions;
 using CoffeeShop.BusinessLogic.PaymentManagement.Enums;
+using CoffeeShop.DataAccess.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoffeeShop.DataAccess.OrderManagement.Repositories;
+namespace CoffeeShop.DataAccess.OrderManagement.OrderRepository;
 
 public class OrderRepository : BaseRepository<Order>, IOrderRepository{
     public OrderRepository(ApplicationDbContext dbContext) : base(dbContext) { }

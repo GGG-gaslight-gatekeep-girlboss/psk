@@ -4,7 +4,7 @@ using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CoffeeShop.Api.Controllers;
+namespace CoffeeShop.Api.UserManagement.Controllers;
 
 [ApiController]
 [Route("v1/users")]
