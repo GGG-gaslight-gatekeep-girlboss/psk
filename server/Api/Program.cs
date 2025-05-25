@@ -1,5 +1,6 @@
 using CoffeeShop.Api.Extensions;
 using CoffeeShop.Api.Middlewares;
+using CoffeeShop.Api.Notifications;
 using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
@@ -17,7 +18,8 @@ builder
     .AddOrderManagement()
     .AddProductManagement(builder.Configuration)
     .AddUserManagement(builder.Configuration)
-    .AddPaymentManagement(builder.Configuration);
+    .AddPaymentManagement(builder.Configuration)
+    .AddNotifications(builder.Configuration);
 
 builder.Host.UseSerilog(
     (context, loggerConfig) =>
@@ -95,5 +97,7 @@ if (app.Configuration.GetValue<bool>("Logging:LogInvokedEndpoint"))
 app.MapControllers();
 
 app.MapHealthChecks("/health");
+
+app.MapHub<NotificationHub>("/hub/notifications");
 
 app.Run();

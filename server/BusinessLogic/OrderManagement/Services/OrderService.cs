@@ -22,13 +22,16 @@ public class OrderService : IOrderService {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPaymentService _paymentService;
 
+    private readonly IOrderNotificationService _orderNotificationService;
+
     public OrderService(
         IOrderRepository orderRepository,
         IOrderMappingService orderMappingService,
         IProductRepository productRepository,
         ICurrentUserAccessor currentUserAccessor,
         IUnitOfWork unitOfWork,
-        IPaymentService paymentService)
+        IPaymentService paymentService,
+        IOrderNotificationService orderNotificationService)
     {
         _orderRepository = orderRepository;
         _orderMappingService = orderMappingService;
@@ -36,6 +39,7 @@ public class OrderService : IOrderService {
         _currentUserAccessor = currentUserAccessor;
         _unitOfWork = unitOfWork;
         _paymentService = paymentService;
+        _orderNotificationService = orderNotificationService;
     }
 
     public Task<PaymentIntentDTO> CreateOrder(CreateOrderDTO dto) =>
@@ -97,6 +101,7 @@ public class OrderService : IOrderService {
     public async Task<OrderDTO> UpdateOrderStatus(Guid id, UpdateOrderDTO request)
     {
         var order = await _orderRepository.GetWithItems(id);
+        var oldStatus = order.OrderStatus;
 
         try {
             OrderStatus enumStatus = Enum.Parse<OrderStatus>(request.OrderStatus.Trim(), ignoreCase: true);
@@ -109,7 +114,13 @@ public class OrderService : IOrderService {
 
         await _unitOfWork.SaveChanges();
 
-        return _orderMappingService.MapOrderToOrderDTO(order);
+        var dto = _orderMappingService.MapOrderToOrderDTO(order);
+        if (order.OrderStatus == OrderStatus.Ready && oldStatus != OrderStatus.Ready)
+        {
+            await _orderNotificationService.SendOrderReadyNotification(dto);
+        }
+
+        return dto;
     }
 
     public async Task DeleteOrder(Guid id)
