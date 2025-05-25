@@ -1,9 +1,8 @@
-using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Enums;
 using CoffeeShop.BusinessLogic.UserManagement.Exceptions;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 
-namespace CoffeeShop.Api.UserManagement.Services;
+namespace CoffeeShop.BusinessLogic.UserManagement.Services;
 
 public class UserAuthorizationService : IUserAuthorizationService
 {

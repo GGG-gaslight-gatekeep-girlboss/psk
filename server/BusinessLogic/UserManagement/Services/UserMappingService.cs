@@ -2,7 +2,7 @@ using CoffeeShop.BusinessLogic.UserManagement.DTOs;
 using CoffeeShop.BusinessLogic.UserManagement.Entities;
 using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 
-namespace CoffeeShop.Api.UserManagement.Services;
+namespace CoffeeShop.BusinessLogic.UserManagement.Services;
 
 public class UserMappingService : IUserMappingService
 {
