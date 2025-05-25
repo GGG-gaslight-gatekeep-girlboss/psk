@@ -22,6 +22,7 @@ import RegisterRoute from "./routes/register";
 import { CoreLayout } from "./shared/components/core-layout";
 import { paths } from "./shared/config/paths";
 import { getLocalStorageItem, removeLocalStorageItem } from "./shared/utils/local-storage";
+import { useOrderNotifications } from './shared/hooks/use-order-notifications';
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -62,6 +63,8 @@ function App() {
       setUser(currentUserQuery.data);
     }
   }, [setUser, currentUserQuery.isError, currentUserQuery.data]);
+  
+  useOrderNotifications();
 
   if (user === undefined) {
     return null;

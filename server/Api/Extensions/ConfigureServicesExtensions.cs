@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Amazon.Runtime;
 using Amazon.S3;
 using CoffeeShop.Api.UserManagement;
+using CoffeeShop.Api.Notifications;
 using CoffeeShop.BusinessLogic.Common.Interfaces;
 using CoffeeShop.BusinessLogic.Common.Services;
 using CoffeeShop.BusinessLogic.OrderManagement.Interfaces;
@@ -75,6 +76,8 @@ public static class ConfigureServicesExtensions
 
         services.AddOpenApi();
 
+        services.AddSignalR();
+
         return services;
     }
 
@@ -132,6 +135,13 @@ public static class ConfigureServicesExtensions
                         if (!string.IsNullOrEmpty(accessToken))
                         {
                             context.Token = accessToken;
+                        }
+
+                        var path = context.HttpContext.Request.Path;
+                        var queryToken = context.Request.Query["access_token"];
+                        if (path.StartsWithSegments("/hub/notifications") && !string.IsNullOrEmpty(queryToken))
+                        {
+                            context.Token = queryToken;
                         }
                         return Task.CompletedTask;
                     },
@@ -233,6 +243,13 @@ public static class ConfigureServicesExtensions
         services.AddScoped<IStripeService, StripeService>(_ => new StripeService(new PaymentIntentService()));
 
         StripeConfiguration.ApiKey = configuration["Stripe:ApiKey"];
+
+        return services;
+    }
+    
+    public static IServiceCollection AddNotifications(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddScoped<IOrderNotificationService, OrderNotificationService>();
 
         return services;
     }
