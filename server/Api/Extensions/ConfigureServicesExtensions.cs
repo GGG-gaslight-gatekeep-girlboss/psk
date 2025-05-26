@@ -18,7 +18,7 @@ using CoffeeShop.BusinessLogic.UserManagement.Interfaces;
 using CoffeeShop.BusinessLogic.UserManagement.Services;
 using CoffeeShop.DataAccess;
 using CoffeeShop.DataAccess.Common.Repositories;
-using CoffeeShop.DataAccess.OrderManagement.OrderRepository;
+using CoffeeShop.DataAccess.OrderManagement.Repositories;
 using CoffeeShop.DataAccess.PaymentManagement.Repositories;
 using CoffeeShop.DataAccess.ProductManagement.Repositories;
 using CoffeeShop.DataAccess.ProductManagement.Strategies;
