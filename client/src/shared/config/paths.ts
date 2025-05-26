@@ -27,6 +27,10 @@ export const paths = {
     path: "/orders",
     getHref: () => "/orders",
   },
+  ordersDetails: {
+    path: "/orders/:orderId",
+    getHref: (orderId: string) => `/orders/${orderId}`,
+  },
   admin: {
     employees: {
       path: "/admin/employees",

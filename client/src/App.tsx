@@ -23,6 +23,7 @@ import { CoreLayout } from "./shared/components/core-layout";
 import { paths } from "./shared/config/paths";
 import { getLocalStorageItem, removeLocalStorageItem } from "./shared/utils/local-storage";
 import { useOrderNotifications } from './shared/hooks/use-order-notifications';
+import { MyOrderDetails } from "./features/orders/components/my-order-details";
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -83,7 +84,8 @@ function App() {
             <Route path={paths.checkout.path} element={<CheckoutRoute />} />
             <Route path={paths.cart.path} element={<CartRoute />} />
             <Route path={paths.orderCompleted.path} element={<OrderCompletedRoute />} />
-            <Route path={paths.orders.path} element={<OrdersRoute />} />
+            <Route path={paths.orders.path} element={<OrdersRoute />} /> 
+            <Route path={paths.ordersDetails.path} element={<MyOrderDetails />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={["BusinessOwner"]} />}>
