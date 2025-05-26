@@ -5,7 +5,7 @@ using CoffeeShop.BusinessLogic.PaymentManagement.Enums;
 using CoffeeShop.DataAccess.Common.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoffeeShop.DataAccess.OrderManagement.OrderRepository;
+namespace CoffeeShop.DataAccess.OrderManagement.Repositories;
 
 public class OrderRepository : BaseRepository<Order>, IOrderRepository{
     public OrderRepository(ApplicationDbContext dbContext) : base(dbContext) { }
