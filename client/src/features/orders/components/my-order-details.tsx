@@ -1,5 +1,5 @@
-import { Card, Text, Table, Badge, Button, Group } from "@mantine/core";
-import { useParams, useNavigate } from "react-router-dom";
+import { Badge, Button, Card, Container, Group, Table, Text } from "@mantine/core";
+import { useNavigate, useParams } from "react-router-dom";
 import { useOrder } from "../api/get-order";
 
 export const MyOrderDetails = () => {
@@ -24,47 +24,49 @@ export const MyOrderDetails = () => {
   };
 
   return (
-    <Card shadow="md" padding="lg" radius="md" withBorder>
-      <Text fw={500} size="xl" mb="md">
-        Order details <br /> ID: {order.id}
-      </Text>
+    <Container mt="lg">
+      <Card shadow="md" padding="lg" radius="md" withBorder>
+        <Text fw={500} size="xl" mb="md">
+          Order details <br /> ID: {order.id}
+        </Text>
 
-      <Group mb="md">
-        <Text>Order status:</Text> {getStatusBadge(order.status)}
-      </Group>
+        <Group mb="md">
+          <Text>Order status:</Text> {getStatusBadge(order.status)}
+        </Group>
 
-      <Text>Firstname: {order.customer.firstName}</Text>
-      <Text>Lastname: {order.customer.lastName}</Text>
-      <Text>Phone number: {order.customer.phoneNumber}</Text>
-      <Text>Pickup time: {new Date(order.pickupTime).toLocaleString()}</Text>
-      <Text>Created at: {new Date(order.createdAt).toLocaleString()}</Text>
+        <Text>Firstname: {order.customer.firstName}</Text>
+        <Text>Lastname: {order.customer.lastName}</Text>
+        <Text>Phone number: {order.customer.phoneNumber}</Text>
+        <Text>Pickup time: {new Date(order.pickupTime).toLocaleString()}</Text>
+        <Text>Created at: {new Date(order.createdAt).toLocaleString()}</Text>
 
-      <Table withTableBorder striped highlightOnHover my="md">
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Product</Table.Th>
-            <Table.Th>Price</Table.Th>
-            <Table.Th>Quantity</Table.Th>
-            <Table.Th>Total</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {order.items.map((item, index) => (
-            <Table.Tr key={index}>
-              <Table.Td>{item.productName}</Table.Td>
-              <Table.Td>{item.productPrice.toFixed(2)} €</Table.Td>
-              <Table.Td>{item.quantity}</Table.Td>
-              <Table.Td>{item.totalPrice.toFixed(2)} €</Table.Td>
+        <Table withTableBorder striped highlightOnHover my="md">
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Product</Table.Th>
+              <Table.Th>Price</Table.Th>
+              <Table.Th>Quantity</Table.Th>
+              <Table.Th>Total</Table.Th>
             </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
+          </Table.Thead>
+          <Table.Tbody>
+            {order.items.map((item, index) => (
+              <Table.Tr key={index}>
+                <Table.Td>{item.productName}</Table.Td>
+                <Table.Td>{item.productPrice.toFixed(2)} €</Table.Td>
+                <Table.Td>{item.quantity}</Table.Td>
+                <Table.Td>{item.totalPrice.toFixed(2)} €</Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
 
-      <Text fw={600}>Total order price: {order.totalPrice.toFixed(2)} €</Text>
+        <Text fw={600}>Total order price: {order.totalPrice.toFixed(2)} €</Text>
 
-      <Button mt="md" onClick={() => navigate(-1)}>
-        &lt; Back
-      </Button>
-    </Card>
+        <Button mt="md" onClick={() => navigate(-1)}>
+          &lt; Back
+        </Button>
+      </Card>
+    </Container>
   );
 };
